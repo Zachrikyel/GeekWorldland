@@ -45,7 +45,7 @@ function injectLoader() {
     if (container) {
         container.innerHTML = `
         <div id="loader">
-            <div class="loader-logo"><img src="images/Initial Background.png" alt="Cargando..."></div>
+            <div class="loader-logo"><img src="https://res.cloudinary.com/degcddlab/image/upload/v1765665235/Initial_Background_lypcbg.png" alt="Cargando..."></div>
             <div class="pacman">
                 <div class="pacman-top"></div><div class="pacman-bottom"></div>
                 <div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><div class="dot dot4"></div>
@@ -118,7 +118,7 @@ function injectHeader() {
 
             <div class="logo-center">
                 <a href="Geek-Worldland.html">
-                    <img src="images/Logo Header.png" alt="Geek Worldland">
+                    <img src="https://res.cloudinary.com/degcddlab/image/upload/v1765665180/Logo_Header_vgrszo.png" alt="Geek Worldland">
                 </a>
             </div>
 
@@ -1161,4 +1161,5 @@ function injectFooter() {
         </footer>`;
     }
 }
+
 
