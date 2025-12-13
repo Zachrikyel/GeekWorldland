@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Galáctico | Geek Worldland</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="All.css">
+    <link rel="stylesheet" href="Arsenal-Geek.css">
+</head>
+
+<body>
+    <!-- ========== LOADER PACMAN ========== -->
+    <div id="loader-container"></div>
+
+    <!-- ========== HEEADER ========== -->
+    <div id="header-container"></div>
+
+    <!-- ========== HERO SECTION ========== -->
+    <div id="hero-dynamic-container"></div>
+    <div class="neon-divider"></div>
+
+    <!-- ========== ALARM SECTION ========== -->
+    <div id="ticker-container"></div>
+    <div class="neon-divider"></div>
+
+    <!-- ========== PANEL DE COMANDO TITULO ========== -->
+    <section class="command-panel-section">
+        <div class="mib-center-info arsenal-header" style="margin: 0 auto 3rem auto;">
+            <h2 class="section-title text-gradient-cyber arsenal-title" style="font-size: 2rem; margin-bottom: 1rem;">
+                ARSENAL GEEK
+            </h2>
+            <p class="zylox-message">
+                <i class='bx bx-box icon-left' style="color: var(--primary-lime);"></i>
+                "Acceso concedido a la armería. Selecciona tus artefactos con sabiduría."
+                <i class='bx bx-box icon-right' style="color: var(--primary-cyan);"></i>
+            </p>
+        </div>
+        <div class="neon-divider"></div>
+
+    </section>
+
+
+    <!-- ========== PANEL DE COMANDO SLIDER ========== -->
+    <div class="acp-slider-wrapper">
+        <label class="power-label">
+            <i class='bx bx-coin-stack'></i> POTENCIA ENERGÉTICA
+        </label>
+
+        <input type="range" class="cyber-range" id="priceSlicer" min="0" max="1000000" step="5000" value="1000000">
+
+        <span class="power-value" id="priceValue">Cargando...</span>
+    </div>
+
+    <div class="neon-divider"></div>
+
+    <!-- ========== PANEL DE COMANDO CATEGORIAS ========== -->
+    <div class="acp-categories-row">
+
+        <div class="geek-card search-card" id="panelSearchBtn">
+            <div class="content">
+                <i class='bx bx-search-alt'></i>
+            </div>
+        </div>
+
+        <div class="acp-scroll-area" id="categoriesContainer">
+            <div class="loading-cats" style="color: var(--primary-cyan); padding: 20px; font-family: 'Orbitron';">
+                <i class='bx bx-radar bx-spin'></i> ESCANEANDO SECTORES...
+            </div>
+        </div>
+
+        <div class="geek-card reset-card" onclick="resetFilters()">
+            <div class="content">
+                <i class='bx bx-x'></i>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="neon-divider"></div>
+
+    <!-- ========== PANEL DE COMANDO ARSENAL ========== -->
+    <section class="products-section" id="productos">
+
+        <div class="products-grid" id="productsGrid">
+            <div class="grid-loader">
+                <i class='bx bx-loader-alt bx-spin'></i> RECUPERANDO DATOS DE LA BÓVEDA...
+            </div>
+        </div>
+
+        <div class="pagination-controls" id="paginationControls">
+        </div>
+
+    </section>
+
+    <!-- ========== PANEL DE COMANDO MODAL ========== -->
+    <div class="product-modal" id="productModal">
+
+        <button class="close-product" onclick="closeProductModal()">
+            <i class='bx bx-x'></i> CERRAR
+        </button>
+
+        <div class="product-modal-content">
+
+            <div class="pm-dashboard-layout">
+
+                <div class="pm-zone-visual">
+                    <div class="carousel-container">
+                        <button class="nav-arrow left" onclick="moveCarousel(-1)">
+                            <i class='bx bx-chevron-left'></i>
+                        </button>
+
+                        <div class="carousel-viewport">
+                            <div class="carousel-track" id="pmCarouselTrack">
+                            </div>
+                        </div>
+
+                        <button class="nav-arrow right" onclick="moveCarousel(1)">
+                            <i class='bx bx-chevron-right'></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pm-zone-config">
+                    <div class="header-block">
+                        <h2 id="pmTitle">Cargando...</h2>
+                        <h4 id="pmLegend">...</h4>
+                    </div>
+
+                    <div class="separator-line"></div>
+
+                    <div class="color-selector-module">
+                        <span class="module-label">COLORES</span>
+                        <div class="color-circles-row" id="pmColorOptions"></div>
+                        <div class="selected-color-readout" id="pmColorName">Estándar</div>
+                    </div>
+                </div>
+
+                <div class="pm-zone-intel">
+                    <div class="stock-readout-module">
+                        <div class="stock-indicators">
+                            <div class="stock-rect" id="stockRect1"></div>
+                            <div class="stock-rect" id="stockRect2"></div>
+                            <div class="stock-rect" id="stockRect3"></div>
+                        </div>
+                        <span id="pmStockText" class="stock-text">ANALIZANDO...</span>
+                    </div>
+
+                    <div class="price-display">
+                        <span class="currency">$</span>
+                        <span id="pmPrice">0</span>
+                    </div>
+
+                    <div class="desc-terminal">
+                        <p id="pmDescription">Esperando datos...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pm-action-deck">
+                <div class="qty-control-wrapper">
+                    <button onclick="changeQty(-1)"><i class='bx bx-minus'></i></button>
+                    <input type="number" id="pmQty" value="1" readonly>
+                    <button onclick="changeQty(1)"><i class='bx bx-plus'></i></button>
+                </div>
+
+                <button class="add-to-arsenal-btn" onclick="addToCartFromModal()">
+                    <span>AÑADIR A LA NAVE</span>
+                    <i class='bx bxs-shopping-bag'></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <div id="footer-container"></div>
+
+    <!-- ========== ZYLOX MENU ========== -->
+    <div id="ufo-component-placeholder"></div>
+
+    <!-- ========== MODAL & OVERLAY ========== -->
+    <div id="global-modals-container"></div>
+
+    <!-- ========== JS EXTERNO ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="All.js"></script>
+    <script src="Arsenal-Geek.js"></script>
+
+</body>
+
+</html>

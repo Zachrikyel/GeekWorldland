@@ -1,0 +1,1190 @@
+/* --- PANEL DE COMANDO --- */
+.command-panel-section {
+    padding: 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.mib-center-info {
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+/* Animación de entrada */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- SLIDER POTENCIA --- */
+.acp-slider-wrapper {
+    width: 100%;
+    max-width: 800px;
+    margin: 1rem auto 3rem;
+    background: linear-gradient(90deg, transparent 0%, rgba(20, 20, 35, 0.9) 20%, rgba(20, 20, 35, 0.9) 80%, transparent 100%);
+    padding: 15px 40px;
+    /* Espacio interno cómodo */
+    border-radius: 25px;
+    /* Bordes redondeados y modernos */
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: none;
+    border-top: 1px solid rgba(6, 182, 212, 0.3);
+    /* Línea fina Cyan arriba */
+    border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+    /* Línea fina Cyan abajo */
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.05);
+}
+
+/* Ajuste para las etiquetas dentro del slider */
+.power-label {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-cyan);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    opacity: 0.9;
+}
+
+.power-value {
+    font-family: 'VT323', monospace;
+    /* Tu fuente Matrix */
+    font-size: 2.2rem;
+    color: var(--primary-lime);
+    min-width: 120px;
+    text-align: right;
+    text-shadow: 0 0 10px var(--primary-lime);
+}
+
+/* Reset base del input */
+input[type=range].cyber-range {
+    -webkit-appearance: none;
+    /* Borrar estilo por defecto de Windows/Mac */
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    height: 50px;
+    margin: 0;
+    cursor: pointer;
+    z-index: 10;
+}
+
+input[type=range].cyber-range:focus {
+    outline: none;
+}
+
+input[type=range].cyber-range::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(to right,
+            #84cc16 0%,
+            #06b6d4 var(--progress, 0%),
+            #333333 var(--progress, 0%),
+            #333333 100%);
+
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+}
+
+/* 3. EL COHETE (THUMB - IMAGEN PNG) */
+input[type=range].cyber-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 60px;
+    width: 60px;
+    background-image: url('https://res.cloudinary.com/degcddlab/image/upload/v1765073301/ovni_ginceh.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    margin-top: -23px;
+    cursor: grab;
+    filter: drop-shadow(0 0 10px var(--primary-cyan));
+    transition: transform 0.1s;
+}
+
+input[type=range].cyber-range:hover::-webkit-slider-thumb {
+    transform: scale(1.1) rotate(45deg);
+    filter: drop-shadow(0 0 20px var(--primary-lime));
+}
+
+input[type=range].cyber-range:active::-webkit-slider-thumb {
+    cursor: grabbing;
+    transform: scale(1.0) rotate(45deg);
+}
+
+/* Firefox Support (Por si usas Firefox) */
+input[type=range].cyber-range::-moz-range-track {
+    width: 100%;
+    height: 14px;
+    border-radius: 10px;
+    background: #333;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+input[type=range].cyber-range::-moz-range-progress {
+    background: linear-gradient(to right, #84cc16, #06b6d4);
+    height: 14px;
+    border-radius: 10px;
+}
+
+input[type=range].cyber-range::-moz-range-thumb {
+    height: 60px;
+    width: 60px;
+    border: none;
+    background-color: transparent;
+    background-image: url('https://res.cloudinary.com/degcddlab/image/upload/v1765073301/ovni_ginceh.png');
+    background-size: contain;
+    cursor: grab;
+}
+
+/* --- CATEGORIAS --- */
+.acp-categories-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding-top: 10px;
+    position: relative;
+    z-index: 50;
+    justify-content: center;
+    height: auto;
+    min-height: 60px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+/* 2. ÁREA DE SCROLL */
+.acp-scroll-area {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 10px;
+    margin-bottom: 0;
+    overflow: visible;
+}
+
+.acp-scroll-area::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* --- TARJETA DE CATEGORÍA (ESTILO GLASS DEL EJEMPLO) --- */
+.geek-card {
+    position: relative;
+    width: 220px;
+    height: auto;
+    min-height: 50px;
+    z-index: 10;
+    transition: 0.3s;
+}
+
+/* Al pasar el mouse, sube el z-index */
+.geek-card:hover {
+    z-index: 1000 !important;
+}
+
+/* CONTENIDO INTERNO (GLASS) */
+.geek-card .content {
+    position: relative;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    height: 50px;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 2px solid var(--card-color, var(--primary-cyan));
+    z-index: 200;
+}
+
+/* AL ABRIRSE (HOVER) */
+.geek-card:hover .content {
+    height: auto;
+    background: rgba(15, 15, 30, 0.95);
+    border-color: var(--card-color, var(--primary-cyan));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px var(--card-color, var(--primary-cyan));
+    padding-bottom: 15px;
+}
+
+/* EFECTO DE LUZ SUPERIOR (Borde brillante) */
+.geek-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0%;
+    height: 3px;
+    background: var(--card-color, var(--primary-cyan));
+    box-shadow: 0 0 10px var(--card-color, var(--primary-cyan));
+    transition: 0.3s;
+    z-index: 20;
+}
+
+.geek-card:hover::before {
+    width: 100%;
+}
+
+/* TÍTULO PRINCIPAL */
+.geek-card h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    width: 100%;
+    height: 50px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+    border-bottom: 1px solid transparent;
+    transition: 0.3s;
+}
+
+.geek-card:hover h2 {
+    color: var(--card-color, var(--primary-cyan));
+    text-shadow: 0 0 8px var(--card-color, var(--primary-cyan));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* LISTA (NIVEL 2) */
+.geek-card ul {
+    list-style: none;
+    padding: 10px 0;
+    width: 100%;
+    opacity: 0;
+    transition: 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.geek-card:hover ul {
+    opacity: 1;
+}
+
+/* ITEMS NIVEL 2 */
+.geek-card>.content>ul>li {
+    width: 100%;
+}
+
+/* Link o Botón Nivel 2 */
+.geek-card>.content>ul>li>div,
+/* Caso con hijos */
+.geek-card>.content>ul>li:not(:has(div)) {
+    /* Caso sin hijos (texto directo) */
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    color: #cbd5e1;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.geek-card>.content>ul>li>div:hover,
+.geek-card>.content>ul>li:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    padding-left: 25px;
+    /* Movimiento sutil */
+}
+
+/* --- ACORDEÓN (NIVEL 3) --- */
+.submenu-level-3 {
+    display: none !important;
+    /* 🔒 FORZAR OCULTO */
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-left: 2px solid var(--card-color, var(--primary-cyan));
+    /* Usa el color de la tarjeta */
+    margin: 5px 10px;
+    border-radius: 4px;
+    padding: 5px 0 !important;
+    opacity: 0;
+    /* Empieza invisible para la animación */
+    transition: opacity 0.3s ease;
+}
+
+.submenu-level-3.active {
+    display: block !important;
+    /* 🔓 FORZAR VISIBLE */
+    opacity: 1;
+    animation: slideDown 0.3s ease-out;
+}
+
+.submenu-level-3 li {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    padding: 5px 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submenu-level-3 li:hover {
+    color: var(--primary-lime);
+    padding-left: 25px;
+}
+
+/* Flecha de Rotación */
+.has-children i {
+    transition: transform 0.3s;
+    font-size: 0.8rem;
+}
+
+.toggle-active i {
+    color: var(--card-color, var(--primary-cyan)) !important;
+}
+
+/* BOTÓN VER TODO */
+.geek-card a {
+    display: none;
+    margin-top: 10px;
+    font-size: 0.75rem;
+    padding: 8px 20px;
+    border: 1px solid var(--primary-cyan);
+    color: var(--primary-cyan);
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+    border-color: var(--card-color, var(--primary-cyan));
+    color: var(--card-color, var(--primary-cyan));
+}
+
+.geek-card:hover a {
+    display: inline-block;
+}
+
+.geek-card a:hover {
+    background: var(--card-color, var(--primary-cyan));
+    color: #000;
+}
+
+/* --- BOTONES LATERALES (BUSCAR Y RESET) --- */
+.geek-card.search-card,
+.geek-card.reset-card {
+    width: 50px;
+    /* Ancho inicial */
+    border: none;
+    height: 100%;
+    /* Asegura que tome la altura de la fila (60px) */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* CONTENIDO INTERNO (BASE - AQUÍ SE CENTRA TODO) */
+.geek-card.search-card .content,
+.geek-card.reset-card .content {
+    /* 🚨 CLAVE DEL ÉXITO: Flexbox activo desde el inicio */
+    display: flex;
+    justify-content: center;
+    /* Centrado Horizontal */
+    align-items: center;
+    /* Centrado Vertical */
+    height: 100%;
+    /* Ocupa toda la altura disponible */
+    width: 100%;
+    padding: 0;
+    /* Sin relleno que empuje el icono */
+}
+
+/* Estilos Específicos: BUSCAR */
+.geek-card.search-card .content {
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px dashed var(--primary-cyan);
+}
+
+/* Estilos Específicos: RESET */
+.geek-card.reset-card .content {
+    background: rgba(236, 72, 153, 0.1);
+    border: 1px dashed var(--accent-pink);
+}
+
+/* ICONOS */
+.geek-card.search-card i,
+.geek-card.reset-card i {
+    font-size: 1.4rem;
+    margin: 0;
+    /* Aseguramos que no tenga márgenes */
+    transition: 0.3s;
+}
+
+/* TEXTOS OCULTOS (Por seguridad) */
+.geek-card.search-card h2,
+.geek-card.reset-card h2 {
+    display: none !important;
+}
+
+/* --- HOVER EXPANSIÓN --- */
+
+/* Hover BUSCAR */
+.geek-card.search-card:hover {
+    width: 70px;
+    /* Un poco más ancho para que respire */
+    transform: scale(1.05);
+}
+
+.geek-card.search-card:hover .content {
+    background: var(--primary-cyan);
+    border-style: solid;
+    box-shadow: 0 0 15px var(--primary-cyan);
+}
+
+.geek-card.search-card:hover i {
+    color: #000;
+    transform: scale(1.2);
+}
+
+/* Hover RESET */
+.geek-card.reset-card:hover {
+    width: 60px;
+    transform: scale(1.1);
+}
+
+.geek-card.reset-card:hover .content {
+    background: var(--accent-pink);
+    border-style: solid;
+    box-shadow: 0 0 15px var(--accent-pink);
+}
+
+.geek-card.reset-card:hover i {
+    color: #fff;
+    transform: rotate(90deg);
+    /* Pequeña rotación al borrar */
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+    .acp-scroll-area {
+        justify-content: flex-start;
+        padding-left: 15px;
+    }
+}
+
+
+/* --- ARSENAL --- */
+.products-section {
+    padding: 0 5%;
+    margin-bottom: 5rem;
+    min-height: 400px;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.grid-loader {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--primary-cyan);
+    font-family: 'Orbitron';
+    padding: 50px;
+    font-size: 1.2rem;
+    animation: pulse 1.5s infinite;
+}
+
+/* TARJETA DE PRODUCTO */
+.monster-card {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 420px;
+    margin: 0 auto;
+    background: #1a1a2e;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* HOVER SOLO EN LA TARJETA (Elevación) */
+.monster-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    border-color: var(--primary-cyan);
+}
+
+/* === CAPAS === */
+.full-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.full-layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    /* Sin transición en transform para asegurar que no se mueva */
+}
+
+.layer-middle {
+    z-index: 1;
+}
+
+.layer-front {
+    z-index: 2;
+}
+
+/* === LÓGICA DE HOVER CORREGIDA === */
+/* Solo la imagen dentro de layer-middle hace zoom */
+.monster-card:hover .layer-middle img {
+    transform: scale(1.15);
+    /* Zoom limpio, sin desplazamiento vertical excesivo */
+}
+
+/* Aseguramos que Fondo y Frente se queden quietos */
+.monster-card:hover .card-bg,
+.monster-card:hover .layer-front img {
+    transform: none;
+}
+
+
+/* === FOOTER, LINEA Y BOTÓN === */
+.card-info-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    z-index: 10;
+    /* Gradiente más fuerte abajo para que se vea el botón y texto */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 10%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+}
+
+/* La Línea Separadora */
+.info-separator {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.5), transparent);
+    /* Cyan desvanecido */
+    margin-bottom: 10px;
+    /* Espacio antes del precio */
+    opacity: 0.7;
+}
+
+.info-footer-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Alineado al centro verticalmente */
+}
+
+.price-tag-compact {
+    font-family: 'VT323', monospace;
+    font-size: 1.8rem;
+    color: var(--primary-lime);
+    text-shadow: 0 0 10px rgba(132, 204, 22, 0.3);
+    line-height: 1;
+}
+
+/* El Botón Glass */
+.add-btn-glass {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    /* Fondo semi-transparente */
+    backdrop-filter: blur(4px);
+    /* Efecto cristal */
+    border: 1px solid var(--primary-cyan);
+    color: var(--primary-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    /* Para que el click funcione aunque esté en overlay */
+}
+
+.add-btn-glass:hover {
+    background: var(--primary-cyan);
+    color: #000;
+    box-shadow: 0 0 15px var(--primary-cyan);
+    transform: scale(1.1);
+}
+
+.card-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+    border: 1px solid transparent;
+    transition: 0.3s;
+    border-radius: 15px;
+}
+
+.monster-card:hover .card-border {
+    border-color: rgba(6, 182, 212, 0.5);
+}
+
+/* --- BOTÓN CARGAR MÁS --- */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.load-more-btn {
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
+    border: 1px solid var(--primary-purple);
+    color: #fff;
+    font-family: 'Orbitron';
+    padding: 12px 40px;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.load-more-btn:hover {
+    background: var(--primary-purple);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+    transform: translateY(-2px);
+}
+
+.name-logo {
+    max-height: 50px;
+    /* Limita la altura del logo/nombre */
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+    display: block;
+    margin: 0 auto;
+}
+
+/* --- MODAL PRODUCTO --- */
+@property --border-angle {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0turn;
+}
+
+.product-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.product-modal.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* 3. LA CAJA DEL CONTENIDO (Donde están las 3 columnas) */
+.product-modal-content {
+    width: 95%;
+    max-width: 1700px;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: transparent;
+    border-radius: 20px;
+    border: none;
+    box-shadow: none;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    isolation: isolate;
+}
+
+.product-modal-content::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(45deg,
+            #fb0094, #0000ff, #00ff00, #ffff00, #ff0000,
+            #fb0094, #0000ff, #00ff00, #ffff00, #ff0000);
+    background-size: 400%;
+    border-radius: 24px;
+    z-index: -2;
+    animation: steam 60s linear infinite;
+    filter: blur(20px);
+    opacity: 0.8;
+}
+
+.product-modal-content::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #0f0f1a;
+    border-radius: 20px;
+    z-index: -1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.product-modal.active .product-modal-content {
+    transform: scale(1);
+}
+
+@keyframes steam {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 400% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+/* 4. BOTÓN DE CIERRE (La X) */
+.close-product {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    font-family: 'Orbitron', sans-serif;
+    padding: 8px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--primary-cyan);
+    color: #fff;
+    border-radius: 30px;
+    cursor: pointer;
+    z-index: 10001;
+    /* Encima del modal */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+.close-product:hover {
+    background: var(--primary-cyan);
+    color: #000;
+    box-shadow: 0 0 25px var(--primary-cyan);
+}
+
+.pm-dashboard-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 0.8fr;
+    gap: 30px;
+    padding: 40px;
+    height: calc(100% - 80px);
+    width: 100%;
+    overflow: hidden;
+}
+
+/* --- COL 1: VISUALIZER --- */
+.pm-zone-visual {
+    position: relative;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-viewport {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.4s ease;
+}
+
+.carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-slide img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+}
+
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--primary-cyan);
+    border: 1px solid var(--primary-cyan);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.nav-arrow:hover {
+    background: var(--primary-cyan);
+    color: #000;
+    box-shadow: 0 0 15px var(--primary-cyan);
+}
+
+.nav-arrow.left {
+    left: 15px;
+}
+
+.nav-arrow.right {
+    right: 15px;
+}
+
+/* --- COL 2: CONFIGURATION --- */
+.pm-zone-config,
+.pm-zone-intel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0 10px;
+}
+
+#pmTitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    text-align: center;
+    line-height: 1;
+    margin-bottom: 50px;
+    color: #fff;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+
+#pmLegend {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    text-align: justify;
+    color: var(--primary-purple);
+    font-weight: 300;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.separator-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    margin: 20px 0;
+}
+
+.module-label {
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: #cecece;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.color-circles-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.color-dot {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+    position: relative;
+}
+
+.color-dot:hover {
+    transform: scale(1.1);
+}
+
+.color-dot.active {
+    border-color: #fff;
+    box-shadow: 0 0 15px var(--primary-cyan);
+    transform: scale(1.15);
+}
+
+.selected-color-readout {
+    font-family: 'Orbitron';
+    color: #ffbb33;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+/* --- COL 3: INTEL (STOCK & PRICE) --- */
+.pm-zone-intel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0 15px;
+}
+
+/* Indicadores de Stock (3 Rectángulos) */
+.stock-readout-module {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stock-indicators {
+    display: flex;
+    gap: 5px;
+}
+
+.stock-rect {
+    flex: 1;
+    height: 12px;
+    background: #333;
+    clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%);
+    transition: 0.3s;
+}
+
+.stock-text {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: right;
+    color: #fff;
+}
+
+/* Clases de estado stock */
+.stock-rect.critical {
+    background: #ff4444;
+    box-shadow: 0 0 8px #ff4444;
+}
+
+.stock-rect.warning {
+    background: #ffbb33;
+    box-shadow: 0 0 8px #ffbb33;
+}
+
+.stock-rect.optimal {
+    background: #00C851;
+    box-shadow: 0 0 8px #00C851;
+}
+
+.price-display {
+    font-family: 'Orbitron';
+    font-size: 2rem;
+    color: #fff;
+    border-bottom: 1px solid var(--primary-purple);
+}
+
+.desc-terminal {
+    font-size: 1.3rem;
+    text-align: justify;
+    color: #bbb;
+    line-height: 1.6;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+/* --- BOTTOM DECK --- */
+.pm-action-deck {
+    height: 80px;
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    gap: 30px;
+}
+
+.qty-control-wrapper {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.qty-control-wrapper button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.qty-control-wrapper input {
+    background: transparent;
+    border: none;
+    color: var(--primary-cyan);
+    width: 50px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.add-to-arsenal-btn {
+    flex: 1;
+    height: 50px;
+    background: linear-gradient(90deg, var(--primary-purple), var(--primary-cyan));
+    border: none;
+    color: #fff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-family: 'Orbitron';
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+    clip-path: polygon(40px 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%, 0 40px);
+}
+
+.add-to-arsenal-btn:hover {
+    filter: brightness(1.2);
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+.close-product {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    font-family: 'Orbitron', sans-serif;
+    padding: 10px 25px;
+    border: 2px solid var(--primary-cyan);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 15px var(--primary-cyan);
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    z-index: 10001;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.close-product:hover {
+    background: var(--primary-cyan);
+    box-shadow: 0 0 30px var(--primary-cyan);
+    color: #000;
+    transform: scale(1.05);
+}
+
+/* RESPONSIVE PARA MOVIL */
+@media (max-width: 992px) {
+    .pm-dashboard-layout {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+        padding-bottom: 20px;
+    }
+
+    .pm-zone-visual {
+        height: 300px;
+    }
+}

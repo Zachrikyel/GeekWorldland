@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geek Worldland - Friki Store</title>
+
+    <!--FUENTES-->
+    <link href="https://fonts.googleapis.com/css?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
+    <!-- ICONOS -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS EXTERNO -->
+    <link rel="stylesheet" href="All.css">
+    <link rel="stylesheet" href="Geek-Worldland.css">
+
+    <!-- SCRIPT CARTA ZYLOX -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            emailjs.init("-KBOyrFbbyZ1o-rX_");
+        })();
+    </script>
+
+</head>
+
+<body>
+    <!-- ========== LOADER PACMAN ========== -->
+    <div id="loader-container"></div>
+
+    <!-- ========== HEEADER ========== -->
+    <div id="header-container"></div>
+
+    <!-- ========== HERO SECTION ========== -->
+    <div id="hero-dynamic-container"></div>
+    <div class="neon-divider"></div>
+
+    <!-- ========== ALARM SECTION ========== -->
+    <div id="ticker-container"></div>
+    <div class="neon-divider"></div>
+
+    <!-- ========== NIVEL DE ACCESO ========== -->
+    <section class="access-levels-section">
+        <div class="mib-center-info" style="margin: 0 auto 3rem auto;">
+            <h2 class="section-title text-gradient-cyber" style="font-size: 2rem; margin-bottom: 1rem;">
+                NIVELES DE ACCESO
+            </h2>
+            <p class="zylox-message">
+                <i class='bx bxs-invader' style="color: var(--primary-lime);"></i>
+                "Identifica tu solicitud, terrícola. Elige tu bando para iniciar el protocolo."
+                <i class='bx bxs-invader' style="color: var(--primary-cyan);"></i>
+            </p>
+        </div>
+
+        <div class="access-row">
+            <div class="mib-card agent-wholesale" onclick="openContactModal('mayorista')">
+                <span></span>
+                <div class="mib-content">
+                    <div class="mib-photo">
+                        <img src="https://res.cloudinary.com/degcddlab/image/upload/v1765660666/Zylox_Agente_Aliado_o7cfgz.png"
+                            alt="Agente Mayorista">
+                        <div class="barcode"></div>
+                        <div class="scan-line"></div>
+                    </div>
+                    <div class="mib-details">
+                        <div class="mib-header">
+                            <h3>AGENTE: ALIADO</h3>
+                            <div class="clearance">TOP LEVEL</div>
+                        </div>
+                        <div class="mib-body">
+                            <p class="code">ID: WH-7890-X</p>
+                            <p class="description">Precios especiales para distribución masiva.</p>
+                        </div>
+                        <div class="mib-footer"><button class="mib-btn">SOLICITAR LOTE</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="group-carousel-container" id="carousel-aliado">
+                <button class="mini-arrow prev-btn cyan-arrow">
+                    <i class='bx bx-chevron-left'></i>
+                </button>
+                <div class="mini-track-container">
+                    <ul class="mini-track">
+
+                        <li class="group-slide">
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 1.png">
+                                <div class="rect-overlay">REF 01</div>
+                            </div>
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 2.png">
+                                <div class="rect-overlay">REF 02</div>
+                            </div>
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 3.png">
+                                <div class="rect-overlay">REF 03</div>
+                            </div>
+                        </li>
+
+                        <li class="group-slide">
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 1.png">
+                                <div class="rect-overlay">REF 04</div>
+                            </div>
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 2.png">
+                                <div class="rect-overlay">REF 05</div>
+                            </div>
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 3.png">
+                                <div class="rect-overlay">REF 06</div>
+                            </div>
+                        </li>
+
+                        <li class="group-slide">
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 1.png">
+                                <div class="rect-overlay">REF 07</div>
+                            </div>
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 2.png">
+                                <div class="rect-overlay">REF 08</div>
+                            </div>
+                            <div class="rect-card cyan-theme"><img src="images/Agente Aliado 3.png">
+                                <div class="rect-overlay">REF 09</div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <button class="mini-arrow next-btn cyan-arrow">></button>
+            </div>
+        </div>
+
+        <div style="height: 50px;"></div>
+
+        <div class="access-row">
+
+            <div class="group-carousel-container" id="carousel-creador">
+                <button class="mini-arrow prev-btn lime-arrow">
+                    <i class='bx bx-chevron-left'></i>
+                </button>
+                <div class="mini-track-container">
+                    <ul class="mini-track">
+
+                        <li class="group-slide">
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 1.png">
+                                <div class="rect-overlay">PROYECTO A</div>
+                            </div>
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 2.png">
+                                <div class="rect-overlay">PROYECTO B</div>
+                            </div>
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 3.png">
+                                <div class="rect-overlay">PROYECTO C</div>
+                            </div>
+                        </li>
+
+                        <li class="group-slide">
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 1.png">
+                                <div class="rect-overlay">PROYECTO D</div>
+                            </div>
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 2.png">
+                                <div class="rect-overlay">PROYECTO E</div>
+                            </div>
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 3.png">
+                                <div class="rect-overlay">PROYECTO F</div>
+                            </div>
+                        </li>
+
+                        <li class="group-slide">
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 1.png">
+                                <div class="rect-overlay">PROYECTO G</div>
+                            </div>
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 2.png">
+                                <div class="rect-overlay">PROYECTO H</div>
+                            </div>
+                            <div class="rect-card lime-theme"><img src="images/Agente Creador 3.png">
+                                <div class="rect-overlay">PROYECTO I</div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <button class="mini-arrow next-btn lime-arrow">></button>
+            </div>
+
+            <div class="mib-card agent-custom" onclick="openContactModal('personalizado')">
+                <span></span>
+                <div class="mib-content">
+                    <div class="mib-photo">
+                        <img src="https://res.cloudinary.com/degcddlab/image/upload/v1765660666/Zylox_Agente_Creador_oguz73.gif"
+                            alt="Agente Creador">
+                        <div class="barcode"></div>
+                        <div class="scan-line"></div>
+                    </div>
+                    <div class="mib-details">
+                        <div class="mib-header">
+                            <h3>AGENTE: CREADOR</h3>
+                            <div class="clearance">TOP SECRET</div>
+                        </div>
+                        <div class="mib-body">
+                            <p class="code">ID: CST-001-Z</p>
+                            <p class="description">Materialización de ideas únicas y prototipos.</p>
+                        </div>
+                        <div class="mib-footer"><button class="mib-btn">INICIAR PROYECTO</button></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <div class="neon-divider"></div>
+
+    <!-- ========== CARTA ZYLOX ========== -->
+    <div class="contact-modal" id="contactModal">
+        <span class="close-contact" onclick="closeContactModal()">×</span>
+        <div class="letter-container">
+            <form class="letter-form" id="timeCapsuleForm" onsubmit="return false;">
+                <div class="paper-content">
+                    <h2 class="letter-greeting">Querido Zylox:</h2>
+
+                    <p class="letter-text">
+                        Soy <input type="text" class="inline-input" placeholder="Tu nombre aquí" required>
+                        desde el planeta Tierra 🌍, específicamente en
+                        <input type="text" class="inline-input" placeholder="Ciudad / País" required>.
+                    </p>
+
+                    <p class="letter-text">
+                        Tengo un sueño que solo tú puedes hacer realidad:
+                        <span class="input-group-inline">
+                            <textarea class="inline-textarea"
+                                placeholder="Ej: Quiero un Funko de mi perro astronauta..." rows="2"
+                                required></textarea>
+                        </span>
+                    </p>
+
+                    <p class="letter-text">
+                        Estos son los detalles mágicos que imagino:
+                        <span class="input-group-inline">
+                            <textarea class="inline-textarea" placeholder="Tamaño, colores, cosas especiales..."
+                                rows="2"></textarea>
+                        </span>
+                    </p>
+
+                    <p class="letter-text">
+                        Por favor contáctame aquí cuando recibas mi mensaje:
+                        <br>
+                        📧 Email: <input type="email" class="inline-input" placeholder="tu@correo.com" required>
+                        <br>
+                        📞 Teléfono: <input type="tel" class="inline-input" placeholder="+57 300..." required>
+                    </p>
+
+                    <p class="letter-closing">¡Espero con ilusión tu respuesta desde las estrellas! ✨</p>
+                </div>
+
+                <div class="ufo-button-wrapper">
+                    <button id="ufoSubmitBtn" type="button" class="trigger-overlay"></button>
+
+                    <div class="btn-text-group">
+                        <span class="sub">En</span>
+                        <span class="mit">viar</span>
+                    </div>
+
+                    <div class="ovni-complex-scale">
+                        <div class="ovni">
+                            <div class="ovni-beam-container">
+                                <div class="ovni-beam"></div>
+
+                                <div class="cow-abducted">
+                                    <div class="cow-container">
+                                        <div class="cow">
+                                            <div class="cow-head-container">
+                                                <div class="ears">
+                                                    <div class="cow-ear left"></div>
+                                                    <div class="cow-ear right"></div>
+                                                </div>
+                                                <div class="cow-head">
+                                                    <div class="horns">
+                                                        <div class="cow-horn left"></div>
+                                                        <div class="cow-horn right"></div>
+                                                    </div>
+                                                    <div class="eyes">
+                                                        <div class="eye left"></div>
+                                                        <div class="eye right"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="mouth"></div>
+                                            </div>
+                                            <div class="body"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ovni-gate"></div>
+                            <div class="ovni-under-ring"></div>
+                            <div class="ovni-ring"></div>
+                            <div class="ovni-pod">
+                                <div class="alien-container">
+                                    <div class="alien">
+                                        <div class="eyes">
+                                            <div class="eye left"></div>
+                                            <div class="eye right"></div>
+                                        </div>
+                                        <div class="mouth"></div>
+                                    </div>
+                                    <div class="hands">
+                                        <div class="hand-group left">
+                                            <div class="handle left"></div>
+                                            <div class="hand left"></div>
+                                        </div>
+                                        <div class="hand-group right">
+                                            <div class="handle right"></div>
+                                            <div class="hand right"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== FOLDERS CATEGORIAS ========== -->
+    <div class="folders-container-linear" id="dynamic-folders-container">
+        <div style="color: white; text-align: center; width: 100%; margin-top: 50px;">
+            <i class='bx bx-loader-alt bx-spin' style="font-size: 2rem;"></i>
+            <br>CARGANDO...
+        </div>
+    </div>
+    <div class="neon-divider"></div>
+
+    <!-- ========== TRANSMISIONES TERRICOLAS ========== -->
+    <section class="reviews-section">
+        <div class="mib-center-info" style="margin: 0 auto 3rem auto;">
+            <h2 class="section-title text-gradient-cyber" style="font-size: 2rem; margin-bottom: 1rem;">
+                TRANSMISIONES DE CLIENTES
+            </h2>
+            <p class="zylox-message">
+                <i class='bx bx-radar radar-icon' style="color: var(--primary-lime);"></i>
+                "Interceptando señales de satisfacción de distintos cuadrantes."
+                <i class='bx bx-radar radar-icon' style="color: var(--primary-cyan);"></i>
+            </p>
+        </div>
+
+        <div class="reviews-layout-container">
+
+            <div class="zylox-observer"
+                style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+
+                <img src="images/Zylox rating.png" alt="Zylox Observer" class="floating-zylox">
+
+                <div id="global-rating-container" class="geek-rating-badge">
+                    <span class="loading-text">
+                        <i class='bx bx-loader-alt bx-spin'></i> CALCULANDO...
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="scene-wrapper">
+                <div class="scene">
+                    <div class="carousel-3d" id="reviewsCarousel">
+                    </div>
+                </div>
+
+                <div class="carousel-controls">
+                    <button id="prevReview" class="mini-arrow prev-btn cyan-arrow">
+                        <i class='bx bx-chevron-left'></i>
+                    </button>
+                    <button id="nextReview" class="mini-arrow next-btn cyan-arrow">></button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="neon-divider"></div>
+
+    <!-- ========== FAQS SECTION ========== -->
+    <section class="faq-section">
+        <div class="mib-center-info" style="margin: 0 auto 3rem auto;">
+            <h2 class="section-title text-gradient-cyber" style="font-size: 2rem; margin-bottom: 1rem;">
+                PREGUNTAS DEL UNIVERSO
+            </h2>
+            <p class="zylox-message">
+                <i class='bx bxs-help-circle' style="color: var(--primary-lime);"></i>
+                "Consulta el archivo S.P.E.C.I.A.L. para resolver tus dudas existenciales."
+                <i class='bx bxs-help-circle' style="color: var(--primary-cyan);"></i>
+            </p>
+        </div>
+
+        <div class="special-cards-carousel-container">
+            <div class="special-cards-carousel">
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-cyan">
+                            <div class="card-top-row">
+                                <div class="rank-badge">01</div>
+                                <div class="perk-name">PAGOS</div>
+                            </div>
+                            <div class="perk-image">
+                                <img src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png"
+                                    alt="Zylox">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Cómo puedo realizar el intercambio energético?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-cyan">
+                            <h3>💳 TRANSMISIONES DE ENERGÍA</h3>
+                            <p>Zylox acepta:</p>
+                            <ul>
+                                <li>MercadoPago Galactic</li>
+                                <li>Nequi / Daviplata</li>
+                                <li>Tarjetas de Crédito</li>
+                            </ul>
+                            <p class="note">Soporte personalizado vía WhatsApp.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-purple">
+                            <div class="card-top-row">
+                                <div class="rank-badge">02</div>
+                                <div class="perk-name">ENVÍOS</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿A qué planetas realizan entregas y cuánto tarda?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-purple">
+                            <h3>🚀 LOGÍSTICA ESPACIAL</h3>
+                            <p><strong>Cobertura:</strong> Toda Colombia.</p>
+                            <p><strong>Tiempos:</strong></p>
+                            <ul>
+                                <li>Stock: 2-3 días.</li>
+                                <li>Custom: 5-10 días.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-lime">
+                            <div class="card-top-row">
+                                <div class="rank-badge">03</div>
+                                <div class="perk-name">TIEMPOS</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Cuánto tarda Zylox en materializar mis creaciones?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-lime">
+                            <h3>🖨️ MATERIALIZACIÓN</h3>
+                            <p>La perfección toma tiempo:</p>
+                            <ul>
+                                <li>Figuras: 2-3 días.</li>
+                                <li>Proyectos Épicos: 1 semana.</li>
+                            </ul>
+                            <p class="note">Zylox prefiere calidad sobre velocidad.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-cyan">
+                            <div class="card-top-row">
+                                <div class="rank-badge">04</div>
+                                <div class="perk-name">MATERIALES</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿De qué energía están hechos mis artefactos?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-cyan">
+                            <h3>🧪 MATERIA PRIMA</h3>
+                            <ul>
+                                <li>PLA Plus (Biodegradable)</li>
+                                <li>ABS (Resistencia)</li>
+                                <li>Resina 8K (Detalle)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-purple">
+                            <div class="card-top-row">
+                                <div class="rank-badge">05</div>
+                                <div class="perk-name">DISEÑO</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Puedo solicitar un diseño de mi imaginación?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-purple">
+                            <h3>🎨 SUEÑOS REALES</h3>
+                            <p>¡Absolutamente! Envíanos tu idea por WhatsApp y te daremos una cotización cósmica en
+                                24h.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-lime">
+                            <div class="card-top-row">
+                                <div class="rank-badge">06</div>
+                                <div class="perk-name">GARANTÍA</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Qué pasa si llega con imperfecciones dimensionales?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-lime">
+                            <h3>🛡️ PROTECCIÓN</h3>
+                            <p>Si hay fallos de impresión:</p>
+                            <ol>
+                                <li>Toma foto (72h).</li>
+                                <li>Contacta soporte.</li>
+                                <li>Reponemos la pieza.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-cyan">
+                            <div class="card-top-row">
+                                <div class="rank-badge">07</div>
+                                <div class="perk-name">RETORNOS</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Puedo devolverlo si no coincide con mi vibración?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-cyan">
+                            <h3>📦 POLÍTICA</h3>
+                            <ul>
+                                <li>Stock: 7 días hábiles.</li>
+                                <li>Custom: No tiene devolución (es único).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-purple">
+                            <div class="card-top-row">
+                                <div class="rank-badge">08</div>
+                                <div class="perk-name">AYUDA</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Cómo contacto al equipo si tengo problemas?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-purple">
+                            <h3>🔧 CANALES</h3>
+                            <p><strong>WhatsApp:</strong> Respuesta rápida.</p>
+                            <p><strong>Email:</strong> 24 horas.</p>
+                            <p><strong>Redes:</strong> @GeekWorldland</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Duplicado de cards para efecto infinito -->
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-cyan">
+                            <div class="card-top-row">
+                                <div class="rank-badge">01</div>
+                                <div class="perk-name">PAGOS</div>
+                            </div>
+                            <div class="perk-image">
+                                <img src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png"
+                                    alt="Zylox">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Cómo puedo realizar el intercambio energético?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-cyan">
+                            <h3>💳 TRANSMISIONES DE ENERGÍA</h3>
+                            <p>Zylox acepta:</p>
+                            <ul>
+                                <li>MercadoPago Galactic</li>
+                                <li>Nequi / Daviplata</li>
+                                <li>Tarjetas de Crédito</li>
+                            </ul>
+                            <p class="note">Soporte personalizado vía WhatsApp.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-purple">
+                            <div class="card-top-row">
+                                <div class="rank-badge">02</div>
+                                <div class="perk-name">ENVÍOS</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿A qué planetas realizan entregas y cuánto tarda?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-purple">
+                            <h3>🚀 LOGÍSTICA ESPACIAL</h3>
+                            <p><strong>Cobertura:</strong> Toda Colombia.</p>
+                            <p><strong>Tiempos:</strong></p>
+                            <ul>
+                                <li>Stock: 2-3 días.</li>
+                                <li>Custom: 5-10 días.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-lime">
+                            <div class="card-top-row">
+                                <div class="rank-badge">03</div>
+                                <div class="perk-name">TIEMPOS</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Cuánto tarda Zylox en materializar mis creaciones?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-lime">
+                            <h3>🖨️ MATERIALIZACIÓN</h3>
+                            <p>La perfección toma tiempo:</p>
+                            <ul>
+                                <li>Figuras: 2-3 días.</li>
+                                <li>Proyectos Épicos: 1 semana.</li>
+                            </ul>
+                            <p class="note">Zylox prefiere calidad sobre velocidad.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-cyan">
+                            <div class="card-top-row">
+                                <div class="rank-badge">04</div>
+                                <div class="perk-name">MATERIALES</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿De qué energía están hechos mis artefactos?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-cyan">
+                            <h3>🧪 MATERIA PRIMA</h3>
+                            <ul>
+                                <li>PLA Plus (Biodegradable)</li>
+                                <li>ABS (Resistencia)</li>
+                                <li>Resina 8K (Detalle)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-purple">
+                            <div class="card-top-row">
+                                <div class="rank-badge">05</div>
+                                <div class="perk-name">DISEÑO</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Puedo solicitar un diseño de mi imaginación?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-purple">
+                            <h3>🎨 SUEÑOS REALES</h3>
+                            <p>¡Absolutamente! Envíanos tu idea por WhatsApp y te daremos una cotización cósmica en
+                                24h.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-lime">
+                            <div class="card-top-row">
+                                <div class="rank-badge">06</div>
+                                <div class="perk-name">GARANTÍA</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Qué pasa si llega con imperfecciones dimensionales?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-lime">
+                            <h3>🛡️ PROTECCIÓN</h3>
+                            <p>Si hay fallos de impresión:</p>
+                            <ol>
+                                <li>Toma foto (72h).</li>
+                                <li>Contacta soporte.</li>
+                                <li>Reponemos la pieza.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-cyan">
+                            <div class="card-top-row">
+                                <div class="rank-badge">07</div>
+                                <div class="perk-name">RETORNOS</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Puedo devolverlo si no coincide con mi vibración?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-cyan">
+                            <h3>📦 POLÍTICA</h3>
+                            <ul>
+                                <li>Stock: 7 días hábiles.</li>
+                                <li>Custom: No tiene devolución (es único).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card-scene">
+                    <div class="special-card">
+                        <div class="card-face card-front fallout-neon-purple">
+                            <div class="card-top-row">
+                                <div class="rank-badge">08</div>
+                                <div class="perk-name">AYUDA</div>
+                            </div>
+                            <div class="perk-image"><img
+                                    src="https://res.cloudinary.com/degcddlab/image/upload/v1765469841/Zylox_Questions_a1m2j5.png">
+                            </div>
+                            <div class="perk-desc">
+                                <p>¿Cómo contacto al equipo si tengo problemas?</p>
+                            </div>
+                            <div class="tap-hint">CLICK PARA LEER</div>
+                        </div>
+                        <div class="card-face card-back fallout-back-purple">
+                            <h3>🔧 CANALES</h3>
+                            <p><strong>WhatsApp:</strong> Respuesta rápida.</p>
+                            <p><strong>Email:</strong> 24 horas.</p>
+                            <p><strong>Redes:</strong> @GeekWorldland</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <div id="footer-container"></div>
+
+    <!-- ========== ZYLOX MENU ========== -->
+    <div id="ufo-component-placeholder"></div>
+
+    <!-- ========== CARTA A ZYLOX ========== -->
+    <div class="contact-modal" id="contactModal">
+        <span class="close-contact" onclick="closeContactModal()">×</span>
+        <div class="letter-container">
+            <form class="letter-form" id="timeCapsuleForm" onsubmit="return false;">
+                <div class="paper-content">
+                    <h2 class="letter-greeting">Querido Zylox:</h2>
+
+                    <p class="letter-text">
+                        Soy <input type="text" class="inline-input" placeholder="Tu nombre aquí" required>
+                        desde el planeta Tierra 🌍, específicamente en
+                        <input type="text" class="inline-input" placeholder="Ciudad / País" required>
+                    </p>
+
+                    <p class="letter-text">
+                        Tengo un sueño que solo tú puedes hacer realidad:
+                        <span class="input-group-inline">
+                            <textarea class="inline-textarea"
+                                placeholder="Ej: Quiero un Funko de mi perro astronauta..." rows="2"
+                                required></textarea>
+                        </span>
+                    </p>
+
+                    <p class="letter-text">
+                        Estos son los detalles mágicos que imagino:
+                        <span class="input-group-inline">
+                            <textarea class="inline-textarea" placeholder="Tamaño, colores, cosas especiales..."
+                                rows="2"></textarea>
+                        </span>
+                    </p>
+
+                    <p class="letter-text">
+                        Por favor contáctame aquí cuando recibas mi mensaje:
+                        <br>
+                        📧 Email: <input type="email" class="inline-input" placeholder="tu@correo.com" required>
+                        <br>
+                        📞 Teléfono: <input type="tel" class="inline-input" placeholder="+57 300..." required>
+                    </p>
+
+                    <p class="letter-closing">¡Espero con ilusión tu respuesta desde las estrellas!✨</p>
+                </div>
+
+                <div class="ufo-button-wrapper">
+                    <button id="ufoSubmitBtn" type="button" class="trigger-overlay"></button>
+
+                    <div class="btn-text-group">
+                        <span class="sub">En</span>
+                        <span class="mit">viar</span>
+                    </div>
+
+                    <div class="ovni-complex-scale">
+                        <div class="ovni">
+                            <div class="ovni-beam-container">
+                                <div class="ovni-beam"></div>
+
+                                <div class="cow-abducted">
+                                    <div class="cow-container">
+                                        <div class="cow">
+                                            <div class="cow-head-container">
+                                                <div class="ears">
+                                                    <div class="cow-ear left"></div>
+                                                    <div class="cow-ear right"></div>
+                                                </div>
+                                                <div class="cow-head">
+                                                    <div class="horns">
+                                                        <div class="cow-horn left"></div>
+                                                        <div class="cow-horn right"></div>
+                                                    </div>
+                                                    <div class="eyes">
+                                                        <div class="eye left"></div>
+                                                        <div class="eye right"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="mouth"></div>
+                                            </div>
+                                            <div class="body"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ovni-gate"></div>
+                            <div class="ovni-under-ring"></div>
+                            <div class="ovni-ring"></div>
+                            <div class="ovni-pod">
+                                <div class="alien-container">
+                                    <div class="alien">
+                                        <div class="eyes">
+                                            <div class="eye left"></div>
+                                            <div class="eye right"></div>
+                                        </div>
+                                        <div class="mouth"></div>
+                                    </div>
+                                    <div class="hands">
+                                        <div class="hand-group left">
+                                            <div class="handle left"></div>
+                                            <div class="hand left"></div>
+                                        </div>
+                                        <div class="hand-group right">
+                                            <div class="handle right"></div>
+                                            <div class="hand right"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== MENU & OVERLAY ========== -->
+    <div id="global-modals-container"></div>
+
+    <!-- ========== JS EXTERNO ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="All.js"></script>
+    <script src="Geek-Worldland.js"></script>
+</body>
+
+</html>

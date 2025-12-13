@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal de Transacción | Geek Worldland</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <link rel="stylesheet" href="All.css">
+    <link rel="stylesheet" href="Terminal_Transaccional.css">
+</head>
+
+<body>
+
+    <div id="loader-container"></div>
+    <div id="header-container"></div>
+
+    <div class="checkout-container">
+        <section class="checkout-section">
+            <h2 class="section-title"><i class='bx bxs-data'></i> Coordenadas de Despliegue</h2>
+
+            <form id="checkoutForm" class="form-grid">
+                <div class="input-group">
+                    <label><i class='bx bx-world'></i> SISTEMA</label>
+                    <input type="text" value="Colombia 🇨🇴" disabled style="opacity: 0.6;">
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bxs-mask'></i> ALIAS</label>
+                    <input type="text" id="nickname" placeholder="Ej: StarLord99" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bx-phone'></i> FREC. 1</label>
+                    <input type="tel" id="phone1" placeholder="+57 300..." required>
+                </div>
+
+                <div class="input-group half-width">
+                    <label><i class='bx bxs-id-card'></i> IDENTIFICACIÓN COMPLETA</label>
+                    <input type="text" id="fullName" placeholder="Nombre y Apellidos" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bx-phone'></i> FREC. 2 (Opcional)</label>
+                    <input type="tel" id="phone2" placeholder="Respaldo">
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bxs-map'></i> SECTOR (Despartamento) </label>
+                    <select id="departmentSelect" onchange="loadCities()" required>
+                        <option value="">Seleccionar...</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bxs-buildings'></i> BASE (Ciudad)</label>
+                    <select id="citySelect" disabled required>
+                        <option value="">Primero Sector...</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bxs-map-pin'></i> ZIP CODE</label>
+                    <input type="text" id="postalCode" placeholder="110111" maxlength="10">
+                </div>
+
+                <div class="input-group full-width">
+                    <label><i class='bx bxs-home'></i> BATICUEVA (Dirección Principal)</label>
+                    <input type="text" id="addressHome" placeholder="Calle Falsa 123, Torre B, Apto 402" required>
+                </div>
+
+                <div class="input-group half-width">
+                    <label><i class='bx bxs-building'></i> TORRE VENGADORES (Trabajo)</label>
+                    <input type="text" id="addressWork" placeholder="Oficina, Edificio... (Opcional)">
+                </div>
+
+                <div class="input-group">
+                    <label><i class='bx bx-time'></i> ATERRIZAJE</label>
+                    <select id="deliveryTime">
+                        <option value="Anytime">Cualquier hora (8am-6pm)</option>
+                        <option value="Morning">Mañana (8am-12pm)</option>
+                        <option value="Afternoon">Tarde (12pm-6pm)</option>
+                    </select>
+                </div>
+
+                <div class="input-group full-width">
+                    <label><i class='bx bx-message-dots'></i> INSTRUCCIONES ADICIONALES</label>
+                    <textarea id="addressDetails" rows="2"
+                        placeholder="Ej: Dejar en portería, timbre dañado..."></textarea>
+                </div>
+
+                <div class="checkbox-row">
+                    <div class="save-info-wrapper">
+                        <input type="checkbox" id="saveInfoCheck">
+                        <label for="saveInfoCheck">Guardar coordenadas para futuras misiones</label>
+                    </div>
+
+                    <div class="save-info-wrapper">
+                        <input type="checkbox" id="promoConsentCheck">
+                        <label for="promoConsentCheck">Autorizo el envío de promociones y ofertas</label>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <aside class="checkout-section order-summary">
+            <h2 class="section-title"><i class='bx bxs-cart-alt'></i> Arsenal Confirmado</h2>
+
+            <div class="products-scroll" id="checkoutItems">
+            </div>
+
+            <div class="discount-container">
+                <input type="text" id="discountCode" placeholder="CÓDIGO SECRETO">
+                <button type="button" id="btnApplyDiscount">APLICAR</button>
+            </div>
+
+            <div class="totals-section">
+                <div class="total-row" style="color: #aaa; font-size: 0.95rem;">
+                    <span>Impuestos (5%)</span>
+                    <span id="checkoutTax">$0</span>
+                </div>
+
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <span id="checkoutSubtotal">$0</span>
+                </div>
+
+                <div class="total-row cyan-text">
+                    <span>Descuento</span>
+                    <span id="checkoutDiscount">$0</span>
+                </div>
+
+                <div class="total-row lime-text">
+                    <span>Envío</span>
+                    <span>GRATIS 🚀</span>
+                </div>
+
+                <div class="total-row main">
+                    <span>TOTAL</span>
+                    <span id="checkoutTotal" class="lime-text">$0</span>
+                </div>
+            </div>
+
+            <div class="payment-methods-container">
+                <label class="pm-header">CANAL DE TRANSACCIÓN</label>
+                <div class="payment-methods">
+                    <div class="payment-option active" onclick="selectPayment('wompi', this)">
+                        <div class="pm-title">WOMPI</div>
+                        <small>Nequi, PSE, Bancolombia</small>
+                    </div>
+                    <div class="payment-option disabled" title="Canal en mantenimiento">
+                        <div class="pm-title">ADDI</div>
+                        <small>Crédito (Próximamente)</small>
+                    </div>
+                </div>
+            </div>
+
+            <button class="pay-btn" id="btnInitTransaction">
+                <i class='bx bxs-rocket'></i> INICIAR TRANSACCIÓN
+            </button>
+
+            <div id="wompi-widget-container"></div>
+        </aside>
+    </div>
+
+    <div class="zylox-modal-overlay" id="successModal">
+        <div class="zylox-card">
+            <img src="https://res.cloudinary.com/degcddlab/image/upload/v1765660665/Zylox_Compra_completed_fa5xol.gif"
+                alt="Zylox" class="zylox-avatar">
+            <h2 class="success-title">¡ORDEN RECIBIDA!</h2>
+            <p class="success-text">
+                Agente <span id="successUser" class="cyan-text"></span>, hemos asegurado tu arsenal.
+                <br>ID de Misión: <span id="orderIdDisplay" style="color: var(--accent-orange);"></span>
+                <br><br>Procediendo a pasarela segura...
+            </p>
+        </div>
+    </div>
+
+    <div id="ufo-component-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="All.js"></script>
+    <script src="Terminal_Transaccional.js"></script>
+</body>
+
+</html>
