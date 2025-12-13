@@ -92,7 +92,7 @@ async function initDynamicFolders() {
     const styleMap = {
         'arkedia': {
             color: 'purple', icon: 'bx bxs-joystick',
-            imgs: ['Portales de juegos 1.png', 'Portales de juegos 2.png', 'Portales de juegos 3.png']
+            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_1_o0wozf.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_2_cmp28r.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_3_bxdav7.png']
         },
         'adn-626': {
             color: 'green', icon: 'bx bxs-invader',
@@ -104,7 +104,7 @@ async function initDynamicFolders() {
         },
         'game-kom': {
             color: 'orange', icon: 'fa-solid fa-khanda',
-            imgs: ['img4.png', 'img5.png', 'img6.png']
+            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765669606/Portales_de_juegos_1_ehpdkz.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765669605/Portales_de_juegos_3_k2zy7n.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765669605/Portales_de_juegos_2_ihsgvc.png']
         },
         'zylox-secret': {
             color: 'pink', icon: 'bx bxs-star',
@@ -568,4 +568,5 @@ function initContactLogic() {
                 showNotification("Error al enviar. Verifica tu conexión.");
         }
     });
+
 }
