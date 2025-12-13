@@ -1388,7 +1388,7 @@
 /* Formulario Interno */
 .letter-container {
     background-color: transparent;
-    background-image: url('images/papel-geek.png');
+    background-image: url('https://res.cloudinary.com/degcddlab/image/upload/v1765665252/Carta_Zylox_zupafk.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -2139,4 +2139,5 @@
     .scene-wrapper {
         width: 100%;
     }
+
 }
