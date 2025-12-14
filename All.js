@@ -260,7 +260,7 @@ function injectGlobalModals() {
                         <label class="terms-label">
                             <input type="checkbox" id="reg-terms">
                             <span class="checkmark-neon"></span>
-                            <span class="terms-text">Acepto la <a href="#" style="color:var(--primary-cyan);">Política de Datos</a>.</span>
+                            <span class="terms-text">Acepto la <a href="https://www.notion.so/2c88bc8d091780188530f595cd1faf0d?source=copy_link" style="color:var(--primary-cyan);">Política de Datos</a>.</span>
                         </label>
                     </div>
                     
@@ -697,26 +697,37 @@ window.handleRegister = async function (e) {
 
     const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-password').value;
-    const name = document.getElementById('reg-name').value;
+    const inputName = document.getElementById('reg-name').value;
+
+    // Generar un ID técnico seguro (ej: "Juan Perez" -> "juan_perez")
+    // Agregamos un número aleatorio corto para evitar CUALQUIER colisión manual
+    const randomSuffix = Math.floor(Math.random() * 1000);
+    const cleanUsername = inputName.trim().toLowerCase().replace(/[^a-z0-9]/g, '_') + "_" + randomSuffix;
 
     const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
         options: {
             data: {
-                full_name: name,
-                username: email.split('@')[0], // Username temporal
+                full_name: inputName,
+                username: cleanUsername,
                 terms_accepted: true,
                 terms_accepted_at: new Date().toISOString()
-            }
+            },
+            redirectTo: 'https://geekworldland.com/'
         }
     });
 
     if (error) {
-        showMessage('❌ ' + error.message, 'error');
+        console.error("Error Registro:", error);
+        // Mostrar el error real para que sepas qué pasa
+        showMessage('❌ Error: ' + error.message, 'error');
     } else {
-        showMessage('✅ ¡Registro exitoso! Revisa tu correo para confirmar.', 'success');
-        // Opcional: Cambiar a tab login
+        showMessage('✅ ¡Registro exitoso! Revisa tu correo.', 'success');
+        // Limpiar campos
+        document.getElementById('reg-email').value = '';
+        document.getElementById('reg-password').value = '';
+        document.getElementById('reg-name').value = '';
     }
 }
 
