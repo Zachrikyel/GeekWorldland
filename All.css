@@ -2949,3 +2949,102 @@ input:checked+.slider:before {
         text-shadow: 0 0 0 rgba(255, 68, 68, 0);
     }
 }
+
+.auth-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0;
+    width: 100%;
+    position: relative;
+}
+
+/* BOTONES DE PESTAÑA INDIVIDUALES */
+.auth-tab {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    font-family: var(--font-display);
+    /* Orbitron */
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    /* Color por defecto */
+}
+
+/* EFECTO HOVER EN PESTAÑAS */
+.auth-tab:hover {
+    opacity: 1;
+    color: white !important;
+    /* Fuerza blanco al pasar el mouse */
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* ESTADO ACTIVO (SELECCIONADO) */
+.auth-tab.active {
+    opacity: 1;
+    /* El color del texto lo maneja el JS inline, pero aquí aseguramos la base */
+}
+
+/* LÍNEA BRILLANTE DEBAJO DE LA PESTAÑA ACTIVA */
+.auth-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    /* Justo sobre el borde del contenedor */
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: currentColor;
+    /* Toma el color del texto (Verde o Rosa) */
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 -2px 10px currentColor;
+    border-radius: 2px 2px 0 0;
+}
+
+.auth-tab.active::after {
+    width: 100%;
+}
+
+/* ANIMACIÓN PARA LA VISTA DE RECUPERACIÓN */
+#view-recovery {
+    animation: fadeIn 0.5s ease;
+}
+
+#view-recovery i {
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        filter: drop-shadow(0 0 5px var(--primary-cyan));
+    }
+
+    50% {
+        transform: translateY(-10px);
+        filter: drop-shadow(0 0 15px var(--primary-cyan));
+    }
+}
+
+/* AJUSTES RESPONSIVE PARA EL NUEVO MODAL */
+@media (max-width: 480px) {
+    .auth-tabs {
+        gap: 10px;
+    }
+
+    .auth-tab {
+        font-size: 0.9rem;
+        padding: 10px 10px;
+    }
+}

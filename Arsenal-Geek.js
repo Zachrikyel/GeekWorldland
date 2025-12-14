@@ -6,7 +6,9 @@ let activeCategory = 'all';
 let activeCategoryId = null;
 let priceLimit = 0;
 let currentProductId = null;
+let cart = JSON.parse(localStorage.getItem('geekCart')) || [];
 let modalProduct = null;
+let selectedColorName = "Base";
 let currentCarouselMedia = [];
 let carouselIndex = 0;
 
@@ -405,6 +407,7 @@ function applyFilters() {
 
 /// MODAL DE DETALLE ///
 window.openProductView = async function (id) {
+    selectedColorName = "Base";
     document.getElementById('productModal').classList.add('active');
     document.getElementById('pmTitle').innerText = "RECUPERANDO DATOS...";
 
@@ -475,7 +478,9 @@ function renderColorSelector() {
 function selectColor(colorObj, dotElement) {
     document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
     dotElement.classList.add('active');
-    document.getElementById('pmColorName').innerText = colorObj.name;
+    selectedColorName = colorObj.name;
+    const labelColor = document.getElementById('pmColorName');
+    if (labelColor) labelColor.innerText = colorObj.name;
 
     let media = [];
     if (modalProduct.media) {
@@ -529,8 +534,14 @@ window.changeQty = function (delta) {
 
 window.addToCartFromModal = function () {
     const qty = parseInt(document.getElementById('pmQty').value);
+
     if (window.addToCart && modalProduct) {
-        addToCart(modalProduct, qty);
+        const productToSend = {
+            ...modalProduct,
+            selected_color: selectedColorName
+        };
+
+        addToCart(productToSend, qty);
         closeProductModal();
     } else {
         console.error("Error: Función addToCart no encontrada.");

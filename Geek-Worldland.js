@@ -539,7 +539,7 @@ function initContactLogic() {
             // 7. ÉXITO TOTAL (Si el correo se envió)
             ufoWrapper.classList.add('active-ufo');
             if (typeof showNotification === 'function')
-                showNotification("🐮 ¡Carta abducida con éxito! 🛸");
+                showNotification("🐮 ¡Vaca - Mensaje abducida con éxito! 🛸");
 
             setTimeout(() => {
                 ufoWrapper.classList.remove('active-ufo');

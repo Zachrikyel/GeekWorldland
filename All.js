@@ -202,54 +202,82 @@ function injectGlobalModals() {
         </div>
 
         <div class="login-modal" id="loginModal">
-            <div class="login-content">
-                <button class="close-login" onclick="closeLoginModal()"><i class='bx bx-x'></i></button>
-                <div id="phase-captcha" style="display:flex; flex-direction:column; align-items:center; width:100%;">
-                    <h2 style="font-family:'Orbitron'; color:white; margin-bottom:10px; letter-spacing:2px;">IDENTIFICACIÓN</h2>
-                    <button id="captcha-guy" class="captcha-container">
-                        <canvas id="display-canvas" class="lottie-canvas"></canvas>
-                    </button>
-                    <div class="theme-toggle glassmorphism">
-                        <label class="switch">
-                            <input type="checkbox" id="theme-switch" onchange="toggleAlienTheme(this)">
-                            <span class="slider round"></span>
-                        </label>
-                        <span class="theme-label" id="captcha-label">Soy Alienígena</span>
-                    </div>
-                    <div style="text-align:center; margin-top:20px; color:#ffffff; font-size:1.5rem;">*Verifica tu especie*</div>
-                </div>
-                <div id="phase-form" style="display:none; flex-direction:column; align-items:center; width:100%; animation: fadeIn 0.5s;">
-                    <h2 style="font-family:'Orbitron'; color:var(--primary-lime); margin-bottom:20px;">ACCESO CONCEDIDO</h2>
-                    <div class="login-form-container">
-                        <button class="social-btn google" onclick="loginWithGoogle()">
-                            <i class='bx bxl-google'></i> Continuar con Google
-                        </button>
-                        <div class="divider"><span>O CON TU ID</span></div>
-                        <form onsubmit="handleEmailLogin(event)" style="width:100%;">
-                            <div class="input-group">
-                                <i class='bx bx-envelope'></i>
-                                <input type="email" id="email" placeholder="Correo Electrónico" required>
-                            </div>
-                            <div class="input-group">
-                                <i class='bx bx-lock-alt'></i>
-                                <input type="password" id="password" placeholder="Contraseña Maestra" required>
-                            </div>
-                            <div class="terms-container">
-                                <label class="terms-label">
-                                    <input type="checkbox" id="termsCheckbox">
-                                    <span class="checkmark-neon"></span>
-                                    <span class="terms-text">
-                                        Acepto la <a href="https://www.notion.so/2c88bc8d091780188530f595cd1faf0d?source=copy_link" target="_blank">Política de Datos</a> y Términos del Servicio.
-                                    </span> *
-                                </label>
-                            </div>
-                            <button type="submit" class="submit-btn">INICIAR SESIÓN / REGISTRARSE</button>
-                        </form>
-                        <p id="login-error" style="color:red; margin-top:10px; font-size:0.9rem;"></p>
-                    </div>
-                </div>
+    <div class="login-content" style="max-width: 450px;">
+        <button class="close-login" onclick="closeLoginModal()"><i class='bx bx-x'></i></button>
+        
+        <div id="phase-captcha" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+            <h2 style="font-family:'Orbitron'; color:white; margin-bottom:10px; letter-spacing:2px;">IDENTIFICACIÓN</h2>
+            <button id="captcha-guy" class="captcha-container">
+                <canvas id="display-canvas" class="lottie-canvas"></canvas>
+            </button>
+            <div class="theme-toggle glassmorphism">
+                <label class="switch">
+                    <input type="checkbox" id="theme-switch" onchange="toggleAlienTheme(this)">
+                    <span class="slider round"></span>
+                </label>
+                <span class="theme-label" id="captcha-label">Soy Alienígena</span>
             </div>
         </div>
+
+        <div id="phase-form" style="display:none; flex-direction:column; align-items:center; width:100%; animation: fadeIn 0.5s;">
+            
+            <div class="auth-tabs" style="display:flex; gap:15px; margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px; width:100%; justify-content:center;">
+                <button onclick="switchAuthTab('login')" id="tab-login" class="auth-tab active" style="background:none; border:none; color:var(--primary-lime); font-family:'Rajdhani'; font-weight:bold; cursor:pointer; font-size:1.1rem; border-bottom: 2px solid var(--primary-lime);">INGRESAR</button>
+                <button onclick="switchAuthTab('register')" id="tab-register" class="auth-tab" style="background:none; border:none; color:#666; font-family:'Rajdhani'; font-weight:bold; cursor:pointer; font-size:1.1rem;">RECLUTARME</button>
+            </div>
+
+            <div id="view-login" style="width:100%;">
+                <button class="social-btn google" onclick="loginWithGoogle()">
+                    <i class='bx bxl-google'></i> Acceder con Google
+                </button>
+                <div class="divider"><span>O CON ID</span></div>
+                
+                <form onsubmit="handleLogin(event)" style="width:100%;">
+                    <div class="input-group"><i class='bx bx-envelope'></i><input type="email" id="login-email" placeholder="Correo Electrónico" required></div>
+                    <div class="input-group"><i class='bx bx-lock-alt'></i><input type="password" id="login-password" placeholder="Contraseña" required></div>
+                    
+                    <div style="text-align:right; margin-bottom:15px;">
+                        <a href="#" onclick="switchAuthTab('recovery')" style="color:var(--primary-cyan); font-size:0.85rem; text-decoration:none;">¿Olvidaste tu clave?</a>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">INICIAR SESIÓN</button>
+                </form>
+            </div>
+
+            <div id="view-register" style="display:none; width:100%;">
+                <form onsubmit="handleRegister(event)" style="width:100%;">
+                    <div class="input-group"><i class='bx bx-user'></i><input type="text" id="reg-name" placeholder="Nombre de Agente" required></div>
+                    <div class="input-group"><i class='bx bx-envelope'></i><input type="email" id="reg-email" placeholder="Correo Electrónico" required></div>
+                    <div class="input-group"><i class='bx bx-lock-alt'></i><input type="password" id="reg-password" placeholder="Crear Contraseña" required></div>
+                    
+                    <div class="terms-container">
+                        <label class="terms-label">
+                            <input type="checkbox" id="reg-terms">
+                            <span class="checkmark-neon"></span>
+                            <span class="terms-text">Acepto la <a href="#" style="color:var(--primary-cyan);">Política de Datos</a>.</span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" style="background: linear-gradient(45deg, #7c3aed, #db2777);">INICIAR RECLUTAMIENTO</button>
+                </form>
+            </div>
+
+            <div id="view-recovery" style="display:none; width:100%; text-align:center;">
+                <i class='bx bx-support' style="font-size:3rem; color:var(--primary-cyan); margin-bottom:10px;"></i>
+                <h3 style="color:white; margin-bottom:10px;">¿Código perdido?</h3>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Enviaremos un enlace cuántico a tu correo para restablecer el acceso.</p>
+                
+                <form onsubmit="handleRecovery(event)" style="width:100%;">
+                    <div class="input-group"><i class='bx bx-envelope'></i><input type="email" id="rec-email" placeholder="Tu Correo Registrado" required></div>
+                    <button type="submit" class="submit-btn" style="background: #0891b2;">ENVIAR ENLACE</button>
+                    <button type="button" onclick="switchAuthTab('login')" style="background:none; border:none; color:#666; margin-top:15px; cursor:pointer;">Volver a Ingresar</button>
+                </form>
+            </div>
+
+            <p id="auth-message" style="margin-top:15px; font-size:0.9rem; text-align:center; min-height:20px;"></p>
+        </div>
+    </div>
+</div>
 
         <div class="welcome-modal" id="welcomeModal" onclick="closeWelcomeModal()">
             <div class="welcome-content">
@@ -503,7 +531,7 @@ async function updateHeaderUser(user) {
         </div>
 
         <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
-            <a href="perfil.html" class="menu-item" style="color:white; text-decoration:none; display:flex; gap:10px; padding:10px; border-radius:8px; transition:0.3s; align-items:center;">
+            <a href="#" class="menu-item" style="color:white; text-decoration:none; display:flex; gap:10px; padding:10px; border-radius:8px; transition:0.3s; align-items:center;">
                 <i class='bx bx-user-circle' style="font-size:1.2rem;"></i> Mi Perfil
             </a>
             
@@ -585,95 +613,119 @@ function initAuthListener() {
     });
 }
 
-window.handleEmailLogin = async function (e) {
-    e.preventDefault(); // Detiene la recarga de la página
-    console.log("📧 Procesando login con email...");
+window.switchAuthTab = function (tab) {
+    // Ocultar todas las vistas
+    document.getElementById('view-login').style.display = 'none';
+    document.getElementById('view-register').style.display = 'none';
+    document.getElementById('view-recovery').style.display = 'none';
 
-    // 1. --- INICIO DE VALIDACIÓN DE TÉRMINOS (NUEVO) ---
-    const termsCheck = document.getElementById('termsCheckbox');
+    // Resetear estilos de tabs
+    document.getElementById('tab-login').style.color = '#666';
+    document.getElementById('tab-login').style.borderBottom = 'none';
+    document.getElementById('tab-register').style.color = '#666';
+    document.getElementById('tab-register').style.borderBottom = 'none';
 
-    // Verificamos si el checkbox existe y si NO está marcado
-    if (termsCheck && !termsCheck.checked) {
-        // Usamos tu sistema de notificaciones elegante
-        if (typeof showNotification === 'function') {
-            showNotification("⚠️ Debes aceptar la Política de Datos para continuar.");
-        } else {
-            alert("⚠️ Debes aceptar la Política de Datos.");
-        }
-
-        // Efecto visual rojo en el texto para guiar al usuario
-        const termsText = document.querySelector('.terms-text');
-        if (termsText) {
-            termsText.style.color = '#ff4444';
-            setTimeout(() => termsText.style.color = '', 500);
-        }
-        return; // 🛑 DETIENE TODO EL PROCESO AQUÍ SI NO ACEPTA
+    // Mostrar la elegida
+    if (tab === 'login') {
+        document.getElementById('view-login').style.display = 'block';
+        document.getElementById('tab-login').style.color = 'var(--primary-lime)';
+        document.getElementById('tab-login').style.borderBottom = '2px solid var(--primary-lime)';
+    } else if (tab === 'register') {
+        document.getElementById('view-register').style.display = 'block';
+        document.getElementById('tab-register').style.color = '#db2777';
+        document.getElementById('tab-register').style.borderBottom = '2px solid #db2777';
+    } else if (tab === 'recovery') {
+        document.getElementById('view-recovery').style.display = 'block';
     }
-    // 1. --- FIN DE VALIDACIÓN ---
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorMsg = document.getElementById('login-error');
+    // Limpiar mensajes
+    showMessage('');
+}
 
-    errorMsg.innerText = "🔄 Conectando con servidor central...";
-    errorMsg.style.color = "#06b6d4";
+function showMessage(msg, type = 'neutral') {
+    const el = document.getElementById('auth-message');
+    el.innerText = msg;
+    if (type === 'error') el.style.color = '#ef4444'; // Rojo
+    else if (type === 'success') el.style.color = '#84cc16'; // Verde
+    else el.style.color = '#06b6d4'; // Azul
+}
 
-    try {
-        // Intentar iniciar sesión
-        let { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
+// 2. PROCESAR LOGIN
+window.handleLogin = async function (e) {
+    e.preventDefault();
+    showMessage('🔄 Verificando credenciales...', 'neutral');
 
-        if (error) {
-            // Si falla porque el usuario no existe, intentamos CREARLO (Registro)
-            if (error.message.includes("Invalid login credentials")) {
-                console.log("📝 Credenciales inválidas, intentando registro...");
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
 
-                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            username: email.split('@')[0],
-                            full_name: email.split('@')[0],
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
 
-                            // 2. --- GUARDAR ACEPTACIÓN EN LA BASE DE DATOS (NUEVO) ---
-                            // Esto se guardará en los metadatos del usuario
-                            terms_accepted: true,
-                            terms_accepted_at: new Date().toISOString()
-                        }
-                    }
-                });
+    if (error) {
+        showMessage('❌ ' + error.message, 'error');
+    } else {
+        showMessage('✅ Acceso Concedido. Bienvenido.', 'success');
+        setTimeout(() => window.closeLoginModal(), 1500);
+    }
+}
 
-                if (signUpError) {
-                    errorMsg.innerText = "❌ Error: " + signUpError.message;
-                    errorMsg.style.color = "#ef4444";
-                } else {
-                    errorMsg.innerText = "✅ ¡Cuenta creada! Revisa tu email para confirmar.";
-                    errorMsg.style.color = "#84cc16";
+// 3. PROCESAR REGISTRO
+window.handleRegister = async function (e) {
+    e.preventDefault();
 
-                    setTimeout(() => {
-                        window.closeLoginModal();
-                    }, 2000);
-                }
-            } else {
-                errorMsg.innerText = "❌ " + error.message;
-                errorMsg.style.color = "#ef4444";
+    const terms = document.getElementById('reg-terms').checked;
+    if (!terms) {
+        showMessage('⚠️ Debes aceptar la Política de Datos.', 'error');
+        return;
+    }
+
+    showMessage('📝 Creando expediente...', 'neutral');
+
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    const name = document.getElementById('reg-name').value;
+
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                full_name: name,
+                username: email.split('@')[0], // Username temporal
+                terms_accepted: true,
+                terms_accepted_at: new Date().toISOString()
             }
-        } else {
-            // Login exitoso
-            console.log("✅ Login exitoso");
-            errorMsg.innerText = "✅ ¡Bienvenido de vuelta!";
-            errorMsg.style.color = "#84cc16";
-            setTimeout(() => {
-                window.closeLoginModal();
-            }, 1000);
         }
-    } catch (err) {
-        console.error("Error inesperado:", err);
-        errorMsg.innerText = "❌ Error de conexión. Intenta de nuevo.";
-        errorMsg.style.color = "#ef4444";
+    });
+
+    if (error) {
+        showMessage('❌ ' + error.message, 'error');
+    } else {
+        showMessage('✅ ¡Registro exitoso! Revisa tu correo para confirmar.', 'success');
+        // Opcional: Cambiar a tab login
+    }
+}
+
+// 4. PROCESAR RECUPERACIÓN (RESET PASSWORD)
+window.handleRecovery = async function (e) {
+    e.preventDefault();
+    showMessage('📡 Buscando usuario...', 'neutral');
+
+    const email = document.getElementById('rec-email').value;
+
+    // IMPORTANTE: Aquí le decimos a dónde redirigir cuando den click en el correo
+    const redirectUrl = window.location.origin + '/reset-password.html';
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl,
+    });
+
+    if (error) {
+        showMessage('❌ ' + error.message, 'error');
+    } else {
+        showMessage('✅ Enlace enviado. Revisa tu bandeja de entrada (y spam).', 'success');
     }
 }
 
@@ -964,15 +1016,23 @@ window.addToCartFromCatalog = function (id, name, price, image) {
 /* CARRITO */
 function addToCart(product, quantity = 1) {
     if (!product) return;
-    const existingItem = cart.find(item => item.id === product.id);
+    const variantColor = product.selected_color || "Estándar";
+    const uniqueCartId = `${product.id}-${variantColor.replace(/\s+/g, '')}`;
+    const existingItem = cart.find(item => item.uniqueId === uniqueCartId);
     if (existingItem) {
         existingItem.quantity += quantity;
     } else {
         const price = product.price || product.base_price || 0;
-        cart.push({ ...product, quantity: quantity, base_price: price });
+        cart.push({
+            ...product,
+            uniqueId: uniqueCartId,
+            selected_color: variantColor,
+            quantity: quantity,
+            base_price: price
+        });
     }
     updateCart();
-    showNotification(`✅ Muestra recolectada: ${product.name}`);
+    showNotification(`✅ Muestra recolectada: ${product.name} (${variantColor})`);
 }
 
 function updateCart() {
@@ -1007,22 +1067,26 @@ function updateCart() {
         const isMvp = item.base_price === maxPrice ? 'mvp-item' : '';
         const delayStyle = `style="--i:${index};"`;
 
-        let displayImage = item.card_middle_url;
+        let displayImage = item.card_middle_url || item.image_url;
         if (!displayImage || displayImage === item.name || !displayImage.includes('/')) {
             displayImage = 'https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif';
         }
 
+        const colorDisplay = item.selected_color !== "Estándar"
+            ? `<span style="font-size:0.8rem; color:var(--primary-lime); display:block;">Color: ${item.selected_color}</span>`
+            : '';
+
         return `
         <div class="cart-item ${isMvp}" ${delayStyle}>
-            <button class="remove-btn" onclick="removeFromCart(${item.id})" title="Purgar Espécimen">
+            <button class="remove-btn" onclick="removeFromCart('${item.uniqueId}')" title="Purgar Espécimen">
                 <i class='bx bxs-trash'></i>
             </button>
             
             <img src="${displayImage}" alt="${item.name}" onerror="this.src='images/Initial Background.png'">
             
             <div class="cart-item-info">
-                <h4 style="font-size:1.3rem; margin-bottom:5px; color:white;">${item.name}</h4>
-                <p class="cart-item-price" style="color:var(--primary-cyan); font-weight:bold;">$${item.base_price.toLocaleString('es-CO')}</p>
+                <h4 style="font-size:1.3rem; margin-bottom:2px; color:white;">${item.name}</h4>
+                ${colorDisplay} <p class="cart-item-price" style="color:var(--primary-cyan); font-weight:bold;">$${item.base_price.toLocaleString('es-CO')}</p>
                 <p class="cart-item-qty" style="font-size:0.8rem; color:#aaa;">Cant: ${item.quantity}</p>
             </div>
             
@@ -1031,8 +1095,8 @@ function updateCart() {
     }).join('');
 }
 
-window.removeFromCart = function (id) {
-    cart = cart.filter(item => item.id !== id);
+window.removeFromCart = function (uniqueIdToRemove) {
+    cart = cart.filter(item => item.uniqueId !== uniqueIdToRemove);
     updateCart();
 };
 
