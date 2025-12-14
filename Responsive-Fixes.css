@@ -384,72 +384,182 @@
 
 @media screen and (max-width: 768px) {
     .carousel {
-        height: 550px;
+        height: 600px;
+        /* Un poco más alto para que quepa todo */
         mask-image: none;
         -webkit-mask-image: none;
     }
 
     .carousel .list {
-        width: 95%;
+        width: 100%;
         height: 100%;
+        left: 0;
+        top: 0;
+        transform: none;
     }
 
-    /* Reposicionar todo para móvil */
+    /* --- RESETEO GENERAL DE ITEMS PARA MÓVIL --- */
     .carousel .list .item {
-        width: 90% !important;
-        left: 5% !important;
-        transform: none !important;
-        filter: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        left: 0 !important;
+        top: 0 !important;
+        border-radius: 0;
+        /* Aseguramos que la transición esté activa */
+        transition: transform 0.5s ease, opacity 0.5s ease !important;
     }
 
-    .carousel .list .item:nth-child(1),
-    .carousel .list .item:nth-child(3),
-    .carousel .list .item:nth-child(4),
-    .carousel .list .item:nth-child(n+5) {
-        display: none;
-        /* Ocultar items no activos en móvil */
+    /* --- ESTADOS DE LA ANIMACIÓN (LA CLAVE DE LA FLUIDEZ) --- */
+
+    /* 1. Item que se va a la izquierda (Anterior) */
+    .carousel .list .item:nth-child(1) {
+        transform: translateX(-100%) !important;
+        filter: blur(10px) !important;
+        z-index: 9 !important;
+        opacity: 0 !important;
+        display: block !important;
+        /* NO USAR NONE */
+        pointer-events: none;
     }
 
+    /* 2. Item Activo (Centro) */
     .carousel .list .item:nth-child(2) {
+        transform: translateX(0) !important;
+        filter: none !important;
+        z-index: 100 !important;
         opacity: 1 !important;
-        z-index: 10 !important;
+        display: block !important;
     }
 
+    /* 3. Item que viene de la derecha (Siguiente) */
+    .carousel .list .item:nth-child(3) {
+        transform: translateX(100%) !important;
+        filter: blur(10px) !important;
+        z-index: 9 !important;
+        opacity: 0 !important;
+        display: block !important;
+        /* NO USAR NONE */
+        pointer-events: none;
+    }
+
+    /* 4. Resto de items (Ocultos en el fondo, esperando turno) */
+    .carousel .list .item:nth-child(n+4) {
+        transform: translateX(100%) scale(0.5) !important;
+        opacity: 0 !important;
+        display: block !important;
+        pointer-events: none;
+    }
+
+    /* --- ESTILO DE LA IMAGEN EN MÓVIL --- */
+    /* Ahora la imagen ocupa todo el fondo para dar efecto inmersivo */
     .carousel .list .item img {
-        width: 85%;
-        right: 7.5%;
-        top: 20%;
-        opacity: 0.5;
-        filter: none;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Recorta la imagen para llenar la pantalla */
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: none !important;
+        opacity: 0.4;
+        /* Oscurecemos la imagen para que se lea el texto */
+        filter: brightness(0.6);
     }
 
+    /* --- ESTILO DEL TEXTO (INTRODUCE) --- */
     .carousel .list .item .introduce {
         width: 90%;
-        left: 5%;
-        bottom: 70px;
+        max-width: none;
+        left: 50%;
+        /* Centrado horizontal */
+        transform: translateX(-50%);
         top: auto;
-        transform: none;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 100;
+        bottom: 80px;
+        /* Pegado abajo, encima de las flechas */
+
+        background: rgba(0, 0, 0, 0.0);
+        /* Fondo transparente o muy sutil */
+        backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+        border-left: none;
+
+        padding: 0;
+        text-align: center;
+        /* Texto centrado */
+        z-index: 101;
+    }
+
+    /* Animaciones de entrada del texto */
+    .carousel .list .item:nth-child(2) .introduce .title,
+    .carousel .list .item:nth-child(2) .introduce .topic,
+    .carousel .list .item:nth-child(2) .introduce .des,
+    .carousel .list .item:nth-child(2) .introduce .seeMore {
+        opacity: 0;
+        animation: fadeInUpMobile 0.5s ease forwards;
+    }
+
+    .introduce .title {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        color: var(--primary-cyan);
     }
 
     .introduce .topic {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        /* Título grande */
+        line-height: 1.1;
+        margin-bottom: 10px;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
     }
 
     .introduce .des {
-        font-size: 0.95rem;
+        font-size: 1rem;
+        color: #ddd;
+        margin-bottom: 20px;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        /* Limitar a 3 líneas */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
+    .introduce .seeMore {
+        width: 100%;
+        background: rgba(6, 182, 212, 0.2);
+        backdrop-filter: blur(5px);
+        border: 1px solid var(--primary-cyan);
+    }
+
+    /* --- FLECHAS EN MÓVIL --- */
     .arrows {
-        bottom: 10px;
-        gap: 10px;
+        bottom: 20px;
+        width: 100%;
+        justify-content: center;
+        gap: 40px;
+        /* Separarlas más para dedos */
     }
 
     .arrows button {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+    }
+}
+
+/* Keyframe específico para móvil (subida suave) */
+@keyframes fadeInUpMobile {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
