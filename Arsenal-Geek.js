@@ -6,7 +6,6 @@ let activeCategory = 'all';
 let activeCategoryId = null;
 let priceLimit = 0;
 let currentProductId = null;
-let cart = JSON.parse(localStorage.getItem('geekCart')) || [];
 let modalProduct = null;
 let selectedColorName = "Base";
 let currentCarouselMedia = [];
