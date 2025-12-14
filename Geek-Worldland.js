@@ -156,7 +156,7 @@ async function initDynamicFolders() {
         }
 
         return `
-        <div class="glass-folder" onclick="location.href='tienda.html?cat=${parent.slug}'">
+        <div class="glass-folder" onclick="location.href='Terminal_Transaccional.html?cat=${parent.slug}'">
             <div class="folder-back bg-${style.color}-dark">
                 <div class="folder-tab"></div>
             </div>
@@ -569,4 +569,5 @@ function initContactLogic() {
     });
 
 }
+
 
