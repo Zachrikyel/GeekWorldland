@@ -106,17 +106,26 @@ function renderCheckoutSummary() {
         currentProductsTotal += item.base_price * item.quantity;
         const imgSrc = item.card_middle_url || item.image_url || 'images/Logo Header.png';
 
+        // --- NUEVO CÓDIGO: LÓGICA DE VISUALIZACIÓN DE VARIANTE ---
+        const variantColor = item.selected_color || "Base";
+        // ---------------------------------------------------------
+
         return `<div class="order-summary-item">
-            <img src="${imgSrc}" class="prod-img" onerror="this.src='images/Logo Header.png'">
-            <div class="prod-details">
-                <h4>${item.name}</h4>
-                <p>Cant: ${item.quantity}</p>
+        <img src="${imgSrc}" class="prod-img" onerror="this.src='images/Logo Header.png'">
+        <div class="prod-details">
+            <h4>${item.name}</h4>
+            
+            <div style="font-size: 0.85rem; color: var(--primary-cyan); margin-bottom: 4px;">
+                <i class='bx bxs-palette'></i> ${variantColor}
             </div>
-            <div class="prod-price">$${(item.base_price * item.quantity).toLocaleString('es-CO')}</div>
-            <button class="btn-delete-item" onclick="removeItem(${index})" title="Expulsar del arsenal">
-                <i class='bx bxs-trash'></i>
-            </button>
-        </div>`;
+
+            <p>Cant: ${item.quantity}</p>
+        </div>
+        <div class="prod-price">$${(item.base_price * item.quantity).toLocaleString('es-CO')}</div>
+        <button class="btn-delete-item" onclick="removeItem(${index})" title="Expulsar del arsenal">
+            <i class='bx bxs-trash'></i>
+        </button>
+    </div>`;
     }).join('');
 
     calculateAndShowTotals();
@@ -319,7 +328,7 @@ window.processPayment = async function () {
                 quantity: item.quantity,
                 unit_price: item.base_price,
                 subtotal: item.base_price * item.quantity,
-                selected_color: item.selected_color || null,
+                selected_color: item.selected_color || 'Base',
                 selected_size: item.selected_size || null,
                 custom_notes: item.custom_notes || null
             }));

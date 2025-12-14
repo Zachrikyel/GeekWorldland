@@ -2814,13 +2814,11 @@ input:checked+.slider:before {
 
 /* ========== CORRECCIONES ADICIONALES AL HEADER ========== */
 
-/* Asegurar que el botón de login tenga el cursor correcto */
 .login-btn {
     cursor: pointer !important;
     position: relative;
 }
 
-/* Evitar que el botón se distorsione al cambiar a avatar */
 .login-btn img,
 .login-btn span {
     cursor: pointer;
@@ -2834,12 +2832,9 @@ input:checked+.slider:before {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
-    /* Fondo oscuro */
     backdrop-filter: blur(15px);
-    /* Efecto cristal */
     -webkit-backdrop-filter: blur(15px);
     z-index: 20000;
-    /* Por encima de todo */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2856,7 +2851,6 @@ input:checked+.slider:before {
 .logout-content {
     background: #151f28;
     border: 1px solid #ff4444;
-    /* Borde rojo alerta */
     box-shadow: 0 0 30px rgba(255, 68, 68, 0.2);
     padding: 2.5rem;
     border-radius: 20px;

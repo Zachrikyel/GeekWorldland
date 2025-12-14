@@ -718,12 +718,8 @@ window.handleRegister = async function (e) {
 window.handleRecovery = async function (e) {
     e.preventDefault();
     showMessage('📡 Buscando usuario...', 'neutral');
-
     const email = document.getElementById('rec-email').value;
-
-    // IMPORTANTE: Aquí le decimos a dónde redirigir cuando den click en el correo
-    const redirectUrl = window.location.origin + '/reset-password.html';
-
+    const redirectUrl = 'https://geekworldland.com/reset-password.html';
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl,
     });
@@ -731,7 +727,7 @@ window.handleRecovery = async function (e) {
     if (error) {
         showMessage('❌ ' + error.message, 'error');
     } else {
-        showMessage('✅ Enlace enviado. Revisa tu bandeja de entrada (y spam).', 'success');
+        showMessage('✅ Enlace enviado. Revisa tu bandeja de entrada.', 'success');
     }
 }
 
