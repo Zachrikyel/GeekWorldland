@@ -1217,7 +1217,7 @@
 
 .card-back .note {
     margin-top: 20px;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: #94a3b8;
     font-style: italic;
     border-top: 1px dashed rgba(255, 255, 255, 0.15);
@@ -1358,7 +1358,7 @@
 .close-contact {
     position: absolute;
     top: 80px;
-    left: 1120px;
+    left: 1320px;
     right: auto;
     font-family: 'Orbitron', sans-serif;
     padding: 10px 10px;

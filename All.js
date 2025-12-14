@@ -1137,7 +1137,7 @@ function injectFooter() {
 
                     <div class="footer__col center-col">
                         <div class="footer-logo-container">
-                            <img src="images/Logo Header.png" alt="Geek Worldland Logo" class="footer-logo">
+                            <img src="https://res.cloudinary.com/degcddlab/image/upload/v1765665180/Logo_Header_vgrszo.png" alt="Geek Worldland Logo" class="footer-logo">
                         </div>
                     </div>
 

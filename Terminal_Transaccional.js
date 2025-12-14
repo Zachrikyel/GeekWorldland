@@ -43,8 +43,8 @@ let isProcessingPayment = false; // ✅ FLAG PARA PREVENIR MÚLTIPLES CLICKS
 
 // Configuración Wompi
 const WOMPI_CONFIG = {
-    PUBLIC_KEY: 'pub_test_3SgxhoMQLK2ErlobubKduc3aNBKU5C7f',
-    INTEGRITY_SECRET: 'test_integrity_b8azfLJGqnXprB3CC6mk4vjFiiYD28r0'
+    PUBLIC_KEY: 'pub_prod_Rod7Z75KWyc81CwF4qkppsbuG9fsRrqW',
+    INTEGRITY_SECRET: 'prod_integrity_FUbxnBEcWdrAf5elSawvMn9OQEzoXUGc'
 };
 
 // ========== INICIALIZACIÓN ==========

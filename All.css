@@ -1812,8 +1812,8 @@ input:checked+.slider:before {
 
 .ufo-menu {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 200px;
+    height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
