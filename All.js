@@ -610,6 +610,12 @@ function initAuthListener() {
             const menu = document.getElementById('zyloxUserMenu');
             if (menu) menu.remove();
         }
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                console.log("🚨 Modo Recuperación detectado. Redirigiendo...");
+                window.location.href = '/reset-password.html';
+            }
+        });
     });
 }
 
