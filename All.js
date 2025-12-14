@@ -78,8 +78,8 @@ function injectTicker() {
         <div class="led-ticker-container">
             <div class="led-display">
                 <div class="led-content">
-                    <span>⚠ ALERTA TEMPORAL: ESPERA LA LLEGADA DE NUEVAS CREACIONES DE OTRO PLANETA QUE ARRIBAN ESTE DEC 24 2025 AM 10:20 • SON POR TIEMPO LIMITADO NO LAS PIERDAS ⚠</span>
-                    <span>⚠ ALERTA TEMPORAL: ESPERA LA LLEGADA DE NUEVAS CREACIONES DE OTRO PLANETA QUE ARRIBAN ESTE DEC 24 2025 AM 10:20 • SON POR TIEMPO LIMITADO NO LAS PIERDAS ⚠</span>
+                    <span>⚠ BIENVENIDO TERRICOLA RECUERDA REGISTRARTE PARA GANAR PUNTOS Y NUNCA PERDERTE DE NUESTRAS NUEVAS CREACIONES ⚠</span>
+                    <span>⚠ BIENVENIDO TERRICOLA RECUERDA REGISTRARTE PARA GANAR PUNTOS Y NUNCA PERDERTE DE NUESTRAS NUEVAS CREACIONES ⚠</span>
                 </div>
             </div>
         </div>`;
@@ -472,41 +472,61 @@ async function updateHeaderUser(user) {
     const newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
 
-    const name = user.user_metadata.full_name || user.email.split('@')[0];
-    const avatarUrl = user.user_metadata.avatar_url;
+    const DEFAULT_AVATAR = 'https://res.cloudinary.com/degcddlab/image/upload/v1765676382/Zylox_Avatar_i0pbjx.png';
+
+    let name = user.user_metadata?.full_name || user.email.split('@')[0];
+    let avatarUrl = user.user_metadata?.avatar_url || null;
+
+    try {
+        if (!avatarUrl) {
+            const { data: profile, error } = await supabase
+                .from('users')
+                .select('avatar_url, full_name, ranks ( name )')
+                .eq('id', user.id)
+                .single();
+
+            if (!error && profile) {
+                avatarUrl = profile.avatar_url || null;
+                if (!user.user_metadata?.full_name && profile.full_name) {
+                    name = profile.full_name;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("No se pudo obtener perfil desde users:", e);
+    }
+
+    avatarUrl = avatarUrl || DEFAULT_AVATAR;
 
     let userRank = "Explorador";
     try {
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from('users')
-            .select(`
-                ranks (
-                    name
-                )
-            `)
+            .select('ranks ( name )')
             .eq('id', user.id)
             .single();
 
-        if (data && data.ranks) {
+        if (data?.ranks?.name) {
             userRank = data.ranks.name;
         }
-    } catch (e) {
+    } catch {
         console.warn("No se pudo obtener rango, usando default.");
     }
 
     const hour = new Date().getHours();
-    let timeGreeting = "";
+    let timeGreeting = "Buenas noches";
     if (hour >= 5 && hour < 12) timeGreeting = "Buenos días";
     else if (hour >= 12 && hour < 19) timeGreeting = "Buenas tardes";
-    else timeGreeting = "Buenas noches";
 
     const finalGreeting = `${timeGreeting}, ${userRank}`;
 
-    if (avatarUrl) {
-        newBtn.innerHTML = `<img src="${avatarUrl}" style="width:35px; height:35px; border-radius:50%; border:2px solid var(--primary-lime); object-fit:cover;">`;
-    } else {
-        newBtn.innerHTML = `<span style="font-size:0.9rem; font-weight:bold; color:var(--primary-lime); border:1px solid var(--primary-lime); border-radius:50%; width:35px; height:35px; display:flex; justify-content:center; align-items:center;">${name.charAt(0).toUpperCase()}</span>`;
-    }
+    newBtn.innerHTML = `
+        <img 
+            src="${avatarUrl}" 
+            style="width:35px; height:35px; border-radius:50%; border:2px solid var(--primary-lime); object-fit:cover;"
+            onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}';"
+        >
+    `;
 
     let menu = document.getElementById('zyloxUserMenu');
     if (!menu) {
@@ -520,18 +540,20 @@ async function updateHeaderUser(user) {
     menu.innerHTML = `
         <div class="menu-header" style="flex-direction:column; align-items:flex-start; gap:10px;">
             <div style="display:flex; align-items:center; gap:15px; width:100%;">
-                ${avatarUrl
-            ? `<img src="${avatarUrl}" class="menu-user-avatar">`
-            : `<div class="menu-user-avatar" style="display:flex;justify-content:center;align-items:center;background:#333;color:white;font-size:1.5rem;">${name.charAt(0).toUpperCase()}</div>`
-        }
+                <img 
+                    src="${avatarUrl}" 
+                    class="menu-user-avatar"
+                    onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}';"
+                >
                 <div class="menu-user-info">
                     <h4 style="font-size:1.1rem; color:var(--primary-cyan); margin:0;">${name}</h4>
                     <span style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:4px; font-size:1.3rem; color:var(--primary-lime);">${userRank}</span>
                 </div>
             </div>
+
             <div style="margin-top:10px; padding:10px; background:rgba(0, 255, 255, 0.05); border-left: 2px solid var(--primary-lime); border-radius:0 5px 5px 0; width:100%;">
                 <p style="color:#ddd; font-size:0.9rem; margin:0; line-height:1.4;">
-                    <em>"${finalGreeting}... ¿Qué vamos a hacer hoy?"</em> 🚀
+                    <em>"${finalGreeting}... ¿Qué vamos a hacer hoy?"</em>
                 </p>
             </div>
         </div>
@@ -540,7 +562,7 @@ async function updateHeaderUser(user) {
             <a href="#" class="menu-item" style="color:white; text-decoration:none; display:flex; gap:10px; padding:10px; border-radius:8px; transition:0.3s; align-items:center;">
                 <i class='bx bx-user-circle' style="font-size:1.2rem;"></i> Mi Perfil
             </a>
-            
+
             <div class="menu-item logout-trigger" style="color:#ff4444; cursor:pointer; display:flex; gap:10px; padding:10px; border-radius:8px; transition:0.3s; align-items:center;">
                 <i class='bx bx-log-out' style="font-size:1.2rem;"></i> Cerrar Sesión
             </div>
@@ -563,6 +585,7 @@ async function updateHeaderUser(user) {
         e.stopPropagation();
         e.preventDefault();
         const isActive = menu.classList.contains('active');
+
         if (isActive) {
             menu.classList.remove('active');
         } else {
@@ -575,13 +598,19 @@ async function updateHeaderUser(user) {
     });
 
     const closeMenuHandler = (e) => {
-        if (menu.classList.contains('active') && !menu.contains(e.target) && !newBtn.contains(e.target)) {
+        if (
+            menu.classList.contains('active') &&
+            !menu.contains(e.target) &&
+            !newBtn.contains(e.target)
+        ) {
             menu.classList.remove('active');
         }
     };
+
     document.removeEventListener('click', closeMenuHandler);
     document.addEventListener('click', closeMenuHandler);
 }
+
 
 function initAuthListener() {
     console.log("🎧 Inicializando listener de autenticación...");
