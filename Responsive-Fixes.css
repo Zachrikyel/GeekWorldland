@@ -1,603 +1,492 @@
-/* ========== HERO CAROUSEL - VERSIÓN COMPATIBLE ========== */
+/* ========== RESPONSIVE FIXES: PROTOCOLO FINAL (FUSIÓN V6.0) ========== */
+/* Incluye: Menú Compacto, Rescate de Vaca, Unlock Terminal y Scrolls Horizontales */
 
-/* IMPORTANTE: Esto reemplaza la sección del carousel en All.css */
+/* ===========================================================
+   1. HEADER & MENÚ COMPACTO (Solución para no tapar botones)
+   =========================================================== */
+@media screen and (max-width: 992px) {
 
-.carousel {
-    position: relative;
-    height: 650px;
-    overflow: hidden;
-    margin-top: 0;
-    background-color: var(--bg-dark);
-    /* Gradiente sin webkit/moz específicos */
-    mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-}
-
-#hero-dynamic-container {
-    position: relative;
-    z-index: 1;
-    min-height: 650px;
-    background-color: var(--bg-dark);
-}
-
-.carousel .list {
-    position: absolute;
-    width: 1140px;
-    max-width: 90%;
-    height: 80%;
-    left: 50%;
-    top: 50px;
-    transform: translateX(-50%);
-    /* Forzar contexto de apilamiento */
-    transform-style: flat;
-}
-
-.carousel .list .item {
-    position: absolute;
-    left: 0;
-    width: 70%;
-    height: 100%;
-    font-size: 15px;
-    /* Transiciones estándar */
-    transition: transform 0.5s ease, opacity 0.5s ease, left 0.5s ease;
-    /* Hardware acceleration universal */
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    transform: translateZ(0);
-}
-
-/* POSICIONES CON LEFT EN LUGAR DE TRANSFORM COMPLEJO */
-.carousel .list .item:nth-child(1) {
-    left: -100%;
-    transform: scale(1.5) translateZ(0);
-    filter: blur(30px);
-    z-index: 11;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.carousel .list .item:nth-child(2) {
-    left: 0%;
-    transform: scale(1) translateZ(0);
-    filter: none;
-    z-index: 10;
-    opacity: 1;
-}
-
-.carousel .list .item:nth-child(3) {
-    left: 50%;
-    transform: scale(0.8) translateY(10%) translateZ(0);
-    filter: blur(10px);
-    z-index: 9;
-    opacity: 1;
-}
-
-.carousel .list .item:nth-child(4) {
-    left: 90%;
-    transform: scale(0.5) translateY(20%) translateZ(0);
-    filter: blur(30px);
-    z-index: 8;
-    opacity: 1;
-}
-
-.carousel .list .item:nth-child(5),
-.carousel .list .item:nth-child(n+6) {
-    left: 120%;
-    transform: scale(0.3) translateY(30%) translateZ(0);
-    filter: blur(40px);
-    z-index: 7;
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* Si solo hay un item */
-.carousel .list .item:only-child {
-    left: 0% !important;
-    transform: scale(1) translateZ(0) !important;
-    filter: none !important;
-    z-index: 10 !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
-
-/* Imagen del producto */
-.carousel .list .item img {
-    width: 50%;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: right 1.5s ease;
-    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.8));
-}
-
-/* Caja de texto (Glass) */
-.carousel .list .item .introduce {
-    opacity: 0;
-    pointer-events: none;
-    width: 500px;
-    max-width: 90%;
-    position: absolute;
-    top: 50%;
-    left: -270px;
-    transform: translateY(-50%);
-    background: rgba(10, 10, 20, 0.6);
-    /* Backdrop-filter con fallback */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    -moz-backdrop-filter: blur(20px);
-    /* Fallback para navegadores sin soporte */
-    background: rgba(10, 10, 20, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-left: 4px solid var(--primary-cyan);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-    z-index: 100;
-}
-
-.carousel .list .item:nth-child(2) .introduce {
-    opacity: 1;
-    pointer-events: auto;
-    transition: opacity 0.5s ease 0.3s;
-}
-
-/* Animación de contenido (simplificada) */
-.carousel .list .item:nth-child(2) .introduce .title,
-.carousel .list .item:nth-child(2) .introduce .topic,
-.carousel .list .item:nth-child(2) .introduce .des,
-.carousel .list .item:nth-child(2) .introduce .seeMore {
-    animation: fadeInUp 0.6s ease forwards;
-    opacity: 0;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+    /* 1. OCULTAR ICONOS DEL HEADER (Lupa, Mundo, Login) EN MÓVIL */
+    /* Esto limpia el espacio para que no se encimen con la hamburguesa */
+    .header-actions .action-btn {
+        display: none !important;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    /* 2. MOSTRAR SOLO LA HAMBURGUESA */
+    /* Usamos el ID o la clase específica para forzar su aparición */
+    .header-actions .menu-toggle,
+    #menuToggle {
+        display: flex !important;
+        position: relative !important;
+        z-index: 10005 !important;
+        /* Encima del header */
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        /* Fondo sutil para verlo */
+        border-radius: 8px;
+        justify-content: center;
+        align-items: center;
+        margin-left: auto;
+        /* Empujar a la derecha */
+    }
+
+    .menu-toggle span {
+        background: #fff !important;
+        /* Líneas blancas fuertes */
+        height: 3px !important;
+        width: 25px !important;
+        margin: 5px 0 !important;
+    }
+
+    /* 3. LA CAJA DEL MENÚ DESPLEGABLE */
+    .nav-left {
+        position: fixed !important;
+        top: 90px;
+        right: -120%;
+        /* Oculto completamente */
+        width: 280px !important;
+        height: auto !important;
+        max-height: 80vh;
+        background: rgba(15, 15, 35, 0.98) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--primary-cyan);
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 30px 20px !important;
+        transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        z-index: 10000 !important;
+        overflow-y: auto;
+    }
+
+    .nav-left.active {
+        right: 15px !important;
+        /* Aparece flotando a la derecha */
+    }
+
+    .nav-link {
+        width: 100%;
+        font-size: 1.2rem !important;
+        margin: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 10px;
+        display: flex;
+        justify-content: flex-start;
     }
 }
 
-.carousel .list .item:nth-child(2) .introduce .title {
-    animation-delay: 0.3s;
-}
-
-.carousel .list .item:nth-child(2) .introduce .topic {
-    animation-delay: 0.5s;
-}
-
-.carousel .list .item:nth-child(2) .introduce .des {
-    animation-delay: 0.7s;
-}
-
-.carousel .list .item:nth-child(2) .introduce .seeMore {
-    animation-delay: 0.9s;
-}
-
-/* Flechas */
-.arrows {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1140px;
-    max-width: 90%;
-    display: flex;
-    gap: 20px;
-    z-index: 100;
-}
-
-.arrows button {
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--primary-cyan);
-    color: var(--primary-cyan);
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-}
-
-.arrows button:hover {
-    background: var(--primary-cyan);
-    color: black;
-    box-shadow: 0 0 15px var(--primary-cyan);
-}
-
-/* ========== BACKDROP FILTER UNIVERSAL ========== */
-
-/* Clase genérica con fallback */
-.glass-effect {
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    -moz-backdrop-filter: blur(15px);
-    /* Fallback sin soporte */
-    background-color: rgba(15, 15, 30, 0.85);
-}
-
-/* Aplicar a elementos que lo necesitan */
-.checkout-section,
-.login-content,
-.cart-modal,
-.product-modal-content::after {
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    -moz-backdrop-filter: blur(15px);
-}
-
-/* ========== ANIMACIONES UNIVERSALES ========== */
-
-/* Velocidad consistente en todos los navegadores */
-@keyframes marquee {
-    0% {
-        transform: translate3d(0, 0, 0);
-    }
-
-    100% {
-        transform: translate3d(-50%, 0, 0);
-    }
-}
-
-.led-content {
-    animation: marquee 25s linear infinite;
-    will-change: transform;
-}
-
-@keyframes scrollCards {
-    0% {
-        transform: translate3d(0, 0, 0);
-    }
-
-    100% {
-        transform: translate3d(calc(-50% - 20px), 0, 0);
-    }
-}
-
-.special-cards-carousel {
-    animation: scrollCards 70s linear infinite;
-    will-change: transform;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: scale(1.05);
-        opacity: 0.8;
-    }
-}
-
-.loader-logo {
-    animation: pulse 2.5s ease-in-out infinite;
-}
-
-/* ========== TRANSFORMS COMPATIBLES ========== */
-
-/* Usar translate3d en lugar de translate2d */
-.monster-card:hover .layer-middle img {
-    transform: scale(1.15) translate3d(0, 0, 0);
-}
-
-.glass-folder:hover {
-    transform: translateY(-20px) skewY(6deg) scale(1.05) translate3d(0, 0, 0);
-}
-
-/* ========== GRADIENTS COMPATIBLES ========== */
-
-.text-gradient-cyber {
-    background: linear-gradient(90deg, #84cc16 0%, #06b6d4 50%, #a855f7 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -moz-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -moz-text-fill-color: transparent;
-    color: transparent;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.2));
-}
-
-/* ========== SCROLLBAR UNIVERSAL ========== */
-
-/* Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: #a855f7 #000;
-}
-
-/* Webkit (Chrome, Safari, Edge) */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #000;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--primary-purple);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-cyan);
-}
-
-/* ========== FOOTER PARALLAX OPTIMIZADO ========== */
-
-@keyframes parralax {
-    0% {
-        background-position-x: 260px;
-    }
-
-    100% {
-        background-position-x: -10000px;
-    }
-}
-
-.footer__parralax-trees {
-    animation: parralax 120s linear infinite;
-}
-
-.footer__parralax-secondplan {
-    animation: parralax 70s linear infinite;
-}
-
-.footer__parralax-premierplan {
-    animation: parralax 35s linear infinite;
-}
-
-/* ========== PERFORMANCE UNIVERSAL ========== */
-
-/* Hardware acceleration para elementos animados */
-.carousel .list .item,
-.monster-card,
-.glass-folder,
-.review-cell,
-.special-card {
-    will-change: transform;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-}
-
-/* Optimizar renders */
-.carousel,
-.products-grid,
-.checkout-container {
-    contain: layout style paint;
-}
-
-/* ========== RESPONSIVE HERO ========== */
-
-@media screen and (max-width: 768px) {
+/* ===========================================================
+   2. HERO SECTION (Estático y Centrado)
+   =========================================================== */
+@media screen and (max-width: 968px) {
     .carousel {
-        height: 600px;
-        /* Un poco más alto para que quepa todo */
-        mask-image: none;
-        -webkit-mask-image: none;
+        height: 100vh;
+        min-height: 600px;
+        overflow: hidden;
+        margin-top: 0;
+        background: #000;
+        position: relative;
     }
 
     .carousel .list {
         width: 100%;
         height: 100%;
-        left: 0;
+        margin: 0;
+        padding: 0;
         top: 0;
+        left: 0;
         transform: none;
     }
 
-    /* --- RESETEO GENERAL DE ITEMS PARA MÓVIL --- */
-    .carousel .list .item {
+    /* Inhibidor de animaciones */
+    .carousel .list .item,
+    .carousel.next .item,
+    .carousel.prev .item {
         width: 100% !important;
         height: 100% !important;
-        left: 0 !important;
-        top: 0 !important;
+        position: absolute;
+        inset: 0;
         border-radius: 0;
-        /* Aseguramos que la transición esté activa */
-        transition: transform 0.5s ease, opacity 0.5s ease !important;
+        animation: none !important;
+        transition: opacity 0.5s ease-in-out;
+        opacity: 0;
+        z-index: 1;
+        transform: none !important;
     }
 
-    /* --- ESTADOS DE LA ANIMACIÓN (LA CLAVE DE LA FLUIDEZ) --- */
-
-    /* 1. Item que se va a la izquierda (Anterior) */
-    .carousel .list .item:nth-child(1) {
-        transform: translateX(-100%) !important;
-        filter: blur(10px) !important;
-        z-index: 9 !important;
-        opacity: 0 !important;
-        display: block !important;
-        /* NO USAR NONE */
-        pointer-events: none;
-    }
-
-    /* 2. Item Activo (Centro) */
+    /* Item Activo */
     .carousel .list .item:nth-child(2) {
-        transform: translateX(0) !important;
-        filter: none !important;
-        z-index: 100 !important;
         opacity: 1 !important;
-        display: block !important;
+        z-index: 10;
     }
 
-    /* 3. Item que viene de la derecha (Siguiente) */
-    .carousel .list .item:nth-child(3) {
-        transform: translateX(100%) !important;
-        filter: blur(10px) !important;
-        z-index: 9 !important;
-        opacity: 0 !important;
-        display: block !important;
-        /* NO USAR NONE */
-        pointer-events: none;
-    }
-
-    /* 4. Resto de items (Ocultos en el fondo, esperando turno) */
-    .carousel .list .item:nth-child(n+4) {
-        transform: translateX(100%) scale(0.5) !important;
-        opacity: 0 !important;
-        display: block !important;
-        pointer-events: none;
-    }
-
-    /* --- ESTILO DE LA IMAGEN EN MÓVIL --- */
-    /* Ahora la imagen ocupa todo el fondo para dar efecto inmersivo */
+    /* IMAGEN CENTRADA */
     .carousel .list .item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        /* Recorta la imagen para llenar la pantalla */
+        /* Ajusta este valor si quieres subir o bajar el foco de la imagen */
+        object-position: center -160px !important;
         position: absolute;
-        right: 0;
         top: 0;
+        left: 0;
+        opacity: 0.6;
         transform: none !important;
-        opacity: 0.4;
-        /* Oscurecemos la imagen para que se lea el texto */
-        filter: brightness(0.6);
     }
 
-    /* --- ESTILO DEL TEXTO (INTRODUCE) --- */
+    /* TEXTO HERO */
     .carousel .list .item .introduce {
-        width: 90%;
-        max-width: none;
-        left: 50%;
-        /* Centrado horizontal */
-        transform: translateX(-50%);
-        top: auto;
-        bottom: 80px;
-        /* Pegado abajo, encima de las flechas */
-
-        background: rgba(0, 0, 0, 0.0);
-        /* Fondo transparente o muy sutil */
-        backdrop-filter: none;
-        border: none;
-        box-shadow: none;
-        border-left: none;
-
-        padding: 0;
+        position: absolute;
+        bottom: 15%;
+        left: 0;
+        width: 100%;
+        padding: 20px;
         text-align: center;
-        /* Texto centrado */
-        z-index: 101;
-    }
-
-    /* Animaciones de entrada del texto */
-    .carousel .list .item:nth-child(2) .introduce .title,
-    .carousel .list .item:nth-child(2) .introduce .topic,
-    .carousel .list .item:nth-child(2) .introduce .des,
-    .carousel .list .item:nth-child(2) .introduce .seeMore {
-        opacity: 0;
-        animation: fadeInUpMobile 0.5s ease forwards;
-    }
-
-    .introduce .title {
-        font-size: 0.9rem;
-        margin-bottom: 5px;
-        color: var(--primary-cyan);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        transform: none !important;
+        opacity: 1 !important;
+        animation: none !important;
+        z-index: 5;
     }
 
     .introduce .topic {
-        font-size: 2.5rem;
-        /* Título grande */
+        font-size: 2.2rem !important;
         line-height: 1.1;
-        margin-bottom: 10px;
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
     }
 
     .introduce .des {
-        font-size: 1rem;
-        color: #ddd;
-        margin-bottom: 20px;
-        text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        /* Limitar a 3 líneas */
+        font-size: 1rem !important;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
         -webkit-box-orient: vertical;
         overflow: hidden;
-    }
-
-    .introduce .seeMore {
-        width: 100%;
-        background: rgba(6, 182, 212, 0.2);
-        backdrop-filter: blur(5px);
-        border: 1px solid var(--primary-cyan);
-    }
-
-    /* --- FLECHAS EN MÓVIL --- */
-    .arrows {
-        bottom: 20px;
-        width: 100%;
-        justify-content: center;
-        gap: 40px;
-        /* Separarlas más para dedos */
-    }
-
-    .arrows button {
-        width: 45px;
-        height: 45px;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
+        display: -webkit-box;
     }
 }
 
-/* Keyframe específico para móvil (subida suave) */
-@keyframes fadeInUpMobile {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ========== MODAL PRODUCTO COMPATIBLE ========== */
-
-@keyframes steamGradient {
-    0% {
-        background-position: 0% 0%;
-    }
-
-    50% {
-        background-position: 100% 0%;
-    }
-
-    100% {
-        background-position: 0% 0%;
-    }
-}
-
-.product-modal-content::before {
-    animation: steamGradient 80s linear infinite;
-    background-size: 200% 100%;
-}
-
-/* ========== FLEXBOX/GRID FALLBACKS ========== */
-
-/* Asegurar que funcione sin CSS Grid en navegadores antiguos */
-@supports not (display: grid) {
-    .products-grid {
-        display: flex;
-        flex-wrap: wrap;
+/* ===========================================================
+   3. HOME FOLDERS (Scroll Horizontal Swipe)
+   =========================================================== */
+@media screen and (max-width: 1100px) {
+    .folders-container-linear {
+        display: flex !important;
+        flex-direction: row !important;
+        /* Horizontal */
+        flex-wrap: nowrap !important;
+        /* No bajar línea */
+        overflow-x: auto !important;
+        /* Scroll activado */
+        justify-content: flex-start !important;
+        align-items: flex-start;
+        padding: 20px 20px 40px 20px !important;
         gap: 20px;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .glass-folder {
+        min-width: 280px !important;
+        /* Ancho fijo para que no se aplasten */
+        max-width: 280px !important;
+        margin: 0 !important;
+        transform: none !important;
+        flex-shrink: 0;
+        /* Evitar que se encojan */
+    }
+
+    /* Estilizar barra scroll horizontal */
+    .folders-container-linear::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .folders-container-linear::-webkit-scrollbar-thumb {
+        background: var(--primary-cyan);
+        border-radius: 10px;
+    }
+}
+
+/* ===========================================================
+   4. ARSENAL CATEGORÍAS (Scroll Horizontal Swipe)
+   =========================================================== */
+@media screen and (max-width: 968px) {
+
+    /* Contenedor Padre de la fila */
+    .acp-categories-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        overflow: hidden;
+        /* Evita scroll general, lo delegamos al hijo */
+        padding: 0 10px;
+    }
+
+    /* El área que debe hacer scroll (donde están las cartas) */
+    .acp-scroll-area {
+        display: flex !important;
+        flex-direction: row !important;
+        /* Fila obligatoria */
+        flex-wrap: nowrap !important;
+        /* PROHIBIDO bajar de línea */
+        overflow-x: auto !important;
+        /* Scroll horizontal ACTIVADO */
+        gap: 15px;
+        width: 100%;
+        padding: 10px 5px;
+        -webkit-overflow-scrolling: touch;
+        /* Suavidad en iOS */
+        scroll-behavior: smooth;
+    }
+
+    /* Las tarjetas de categoría dentro del scroll */
+    .acp-scroll-area .geek-card {
+        min-width: 160px !important;
+        /* Ancho fijo para obligar scroll */
+        max-width: 160px !important;
+        height: auto !important;
+        margin: 0 !important;
+        flex-shrink: 0;
+        /* Evita que se aplasten */
+    }
+
+    /* Ajustes internos de la tarjeta para móvil */
+    .geek-card .content h2 {
+        font-size: 1rem !important;
+    }
+
+    .geek-card .content ul {
+        display: none;
+        /* Opcional: Ocultar sublistas en la vista previa para ahorrar espacio */
+    }
+
+    /* Ocultar botones laterales si estorban (Lupa y Reset) */
+    .geek-card.search-card,
+    .geek-card.reset-card {
+        min-width: 50px !important;
+        width: 50px !important;
+        padding: 0 !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Barra de scroll estilizada */
+    .acp-scroll-area::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .acp-scroll-area::-webkit-scrollbar-thumb {
+        background: var(--primary-cyan);
+        border-radius: 10px;
+    }
+}
+
+@media screen and (max-width: 968px) {
+    .acp-slider-wrapper {
+        display: none !important;
+    }
+}
+
+/* 2. GESTIÓN DE ICONOS HEADER VS MENÚ */
+@media screen and (max-width: 992px) {
+
+    /* Ocultar los botones originales del header (Lupa, Mundo, User) */
+    .header-actions .action-btn {
+        display: none !important;
+    }
+
+    /* Asegurar que la Hamburguesa sea el ÚNICO rey */
+    .menu-toggle {
+        display: flex !important;
+        margin-left: auto;
+        /* Empujar a la derecha */
+        z-index: 20002 !important;
+    }
+
+    /* Mostrar los nuevos enlaces móviles que agregaremos con JS */
+    .nav-link.mobile-only-link {
+        display: flex !important;
+        /* Se muestran en el menú desplegable */
+        color: var(--primary-cyan) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 10px;
+        padding-top: 15px;
+    }
+}
+
+/* En escritorio, esos enlaces nuevos NO deben existir */
+@media screen and (min-width: 993px) {
+    .nav-link.mobile-only-link {
+        display: none !important;
+    }
+}
+
+/* 3. CORRECCIÓN CARRUSEL CATEGORÍAS (Arsenal) */
+@media screen and (max-width: 968px) {
+    .acp-scroll-area {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        /* Obligar fila india */
+        overflow-x: auto !important;
+        /* Permitir deslizar */
+        justify-content: flex-start !important;
+        width: 100%;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+        gap: 15px;
+    }
+
+    /* Asegurar que las tarjetas no se encojan */
+    .acp-scroll-area .geek-card {
+        min-width: 160px !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* ===========================================================
+   5. FOOTER & VACA (Rescate V4.0)
+   =========================================================== */
+.footer {
+    overflow: visible !important;
+    position: relative;
+    z-index: 5;
+    margin-top: 300px !important;
+    /* Espacio para animación */
+}
+
+/* Escenario Parallax */
+.footer__parralax {
+    top: -300px !important;
+    height: 300px !important;
+    width: 100%;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* La Vaca / Coche */
+.footer__parralax-voiture {
+    z-index: 10 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    bottom: 0 !important;
+}
+
+@media screen and (max-width: 768px) {
+
+    /* Logo Footer */
+    .footer-logo {
+        transform: none !important;
+        margin: 0 auto 20px auto !important;
+        display: block;
+        max-width: 180px;
+    }
+
+    .footer__columns {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Logo primero */
+    .footer__col.center-col {
+        order: -1;
+    }
+}
+
+/* ===========================================================
+   6. TERMINAL TRANSACCIONAL (Unlock Scroll V4.0)
+   =========================================================== */
+@media screen and (max-width: 1100px) {
+
+    /* IMPORTANTE: Permitir scroll en body */
+    body {
+        overflow-y: auto !important;
+        overflow-x: hidden;
+        height: auto !important;
+        position: static !important;
+    }
+
+    .checkout-container {
+        display: flex;
+        flex-direction: column;
+        height: auto !important;
+        overflow: visible !important;
+        padding-bottom: 50px;
+        margin-top: 20px;
+    }
+
+    .checkout-section {
+        height: auto !important;
+        overflow: visible !important;
     }
 
     .form-grid {
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .input-group,
+    .full-width,
+    .half-width {
+        width: 100% !important;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+
+    .checkout-section.order-summary {
+        order: 1;
+        margin-bottom: 30px;
     }
 }
 
-/* ========== FIN CORRECCIONES UNIVERSALES ========== */
+/* ===========================================================
+   7. AJUSTES VARIOS UI
+   =========================================================== */
+@media screen and (max-width: 1100px) {
+    .mib-card {
+        width: 92% !important;
+        max-width: 450px;
+        margin: 0 auto 30px auto;
+    }
+
+    .access-row {
+        flex-direction: column;
+    }
+
+    .reverse-layout {
+        flex-direction: column-reverse;
+    }
+}
+
+/* Zylox Menu (Flotante no intrusivo) */
+.ufo-container {
+    pointer-events: none;
+    z-index: 9000;
+}
+
+.ufo-toggle {
+    pointer-events: auto;
+}
+
+@media screen and (max-width: 480px) {
+    .ufo-container {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .ufo-menu {
+        width: 200px;
+        height: 200px;
+    }
+}

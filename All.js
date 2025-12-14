@@ -108,11 +108,17 @@ function injectHeader() {
                     <i class='bx bxs-rocket'></i> Nave Nodriza
                 </a>
                 <a href="Arsenal-Geek.html" class="nav-link" id="link-arsenal">
-                    <i class='bx bxs-component'></i> Aresenal Geek
+                    <i class='bx bxs-component'></i> Arsenal Geek
                 </a>
-                
                 <a href="#" class="nav-link" id="link-freelancer" onclick="openFreelancerModal(event)">
                     <i class='bx bxs-brain'></i> Zylox Devs
+                </a>
+
+                <a href="#" class="nav-link mobile-only-link" onclick="document.getElementById('searchOverlay').classList.add('active'); document.querySelector('.nav-left').classList.remove('active'); return false;">
+                    <i class='bx bx-search'></i> Búsqueda Global
+                </a>
+                <a href="#" class="nav-link mobile-only-link" onclick="openLoginModal(); document.querySelector('.nav-left').classList.remove('active'); return false;">
+                    <i class='bx bxs-user-circle'></i> Identificación
                 </a>
             </nav>
 
@@ -127,7 +133,7 @@ function injectHeader() {
                     <i class='bx bx-search'></i> 
                 </button>
                 
-                <button class="action-btn" aria-label="Idioma" style="opacity:0.6; cursor:default;" title="Traducción Universal: Desactivada">
+                <button class="action-btn" aria-label="Idioma" style="opacity:0.6; cursor:default;">
                     <i class='bx bx-world'></i> 
                 </button>
                 
@@ -906,10 +912,7 @@ async function loadDynamicHero() {
         .eq('is_trending', true)
         .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error("Error Hero:", error);
-        return;
-    }
+    if (error) console.error("Error Hero:", error);
 
     const isCatalogPage = document.getElementById('productsGrid');
     const btnAction = isCatalogPage
@@ -917,12 +920,11 @@ async function loadDynamicHero() {
         : "location.href='Arsenal-Geek.html'";
 
     let itemsHtml = "";
-
     if (trendingProducts && trendingProducts.length > 0) {
         itemsHtml = trendingProducts.map((product, index) => `
             <div class="item">
                 <img src="${product.card_middle_url}" alt="${product.name}">
-                <div class="introduce">
+                <div class="introduce neon-card-style">
                     <div class="title">TENDENCIA #${index + 1}</div>
                     <div class="topic">${product.name}</div>
                     <div class="des">${product.legend || product.description || "Artefacto disponible."}</div>
@@ -930,18 +932,6 @@ async function loadDynamicHero() {
                 </div>
             </div>
         `).join('');
-    } else {
-        itemsHtml = `
-            <div class="item">
-                <img src="images/Logo Header.png" alt="Geek Worldland">
-                <div class="introduce">
-                    <div class="title">BIENVENIDO</div>
-                    <div class="topic">Geek Worldland</div>
-                    <div class="des">Tu tienda de artículos geek está lista.</div>
-                    <button class="seeMore" onclick="${btnAction}">EXPLORAR ARSENAL &#8595;</button>
-                </div>
-            </div>
-        `;
     }
 
     container.innerHTML = `
@@ -951,12 +941,10 @@ async function loadDynamicHero() {
                 <button id="prevHero"><i class='bx bx-chevron-left'></i></button>
                 <button id="nextHero">></button>
             </div>
-        </div>
-    `;
+            <div class="carousel-bg-glow"></div>
+        </div>`;
 
-    setTimeout(() => {
-        initHeroCarousel();
-    }, 100);
+    initHeroCarousel();
 }
 
 function initHeroCarousel() {
@@ -965,15 +953,12 @@ function initHeroCarousel() {
     const carousel = document.querySelector('.carousel');
     const listHTML = document.querySelector('.carousel .list');
 
-    if (!nextBtn || !carousel || !listHTML) return;
+    if (!nextBtn || !carousel) return;
 
     const showSlider = (type) => {
         carousel.classList.remove('next', 'prev');
-
-        const items = listHTML.querySelectorAll('.item');
+        let items = document.querySelectorAll('.carousel .list .item');
         if (items.length === 0) return;
-
-        void carousel.offsetWidth;
 
         if (type === 'next') {
             listHTML.appendChild(items[0]);
@@ -982,57 +967,62 @@ function initHeroCarousel() {
             listHTML.prepend(items[items.length - 1]);
             carousel.classList.add('prev');
         }
-
-        setTimeout(() => {
-            carousel.classList.remove('next', 'prev');
-        }, 500);
     }
-    let autoRun = setInterval(() => {
-        showSlider('next');
-    }, 5000);
-
+    let autoRun = setInterval(() => { showSlider('next'); }, 5000);
     const resetTimer = () => {
         clearInterval(autoRun);
-        autoRun = setInterval(() => {
-            showSlider('next');
-        }, 5000);
+        autoRun = setInterval(() => { showSlider('next'); }, 5000);
     }
 
+    // Cloning to remove old listeners
     const newNext = nextBtn.cloneNode(true);
     const newPrev = prevBtn.cloneNode(true);
     nextBtn.parentNode.replaceChild(newNext, nextBtn);
     prevBtn.parentNode.replaceChild(newPrev, prevBtn);
-    newNext.onclick = () => {
-        showSlider('next');
-        resetTimer();
-    }
 
-    newPrev.onclick = () => {
-        showSlider('prev');
-        resetTimer();
-    }
-
-    carousel.addEventListener('mouseenter', () => {
-        clearInterval(autoRun);
-    });
-
-    carousel.addEventListener('mouseleave', () => {
-        resetTimer();
-    });
+    newNext.onclick = function () { showSlider('next'); resetTimer(); }
+    newPrev.onclick = function () { showSlider('prev'); resetTimer(); }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const existingCarousel = document.querySelector('.carousel');
-    if (existingCarousel) {
-        // Ocultar temporalmente hasta que se inicialice
-        existingCarousel.style.visibility = 'hidden';
 
-        setTimeout(() => {
-            initHeroCarousel();
-            existingCarousel.style.visibility = 'visible';
-        }, 100);
+function renderArsenalGrid(products, container) {
+    if (!products || products.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column:1/-1; text-align:center; padding: 50px;">
+                <i class='bx bx-ghost' style="font-size:4rem; color:var(--text-muted);"></i>
+                <h3 style="color:white; margin-top:20px;">No se encontraron especímenes.</h3>
+                <p style="color:#94a3b8;">Intenta con otro término de búsqueda.</p>
+                <button onclick="window.location.href='Arsenal-Geek.html'" style="margin-top:20px; padding:10px 20px; background:var(--primary-purple); border:none; color:white; border-radius:5px; cursor:pointer;">
+                    Ver todo el Arsenal
+                </button>
+            </div>`;
+        return;
     }
-});
+
+    container.innerHTML = products.map(product => {
+        const price = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(product.base_price);
+        const finalImage = product.card_middle_url || product.card_front_url || 'images/Logo Header.png';
+
+        return `
+        <div class="product-card neon-card-style">
+            <div class="product-image">
+                <img src="${finalImage}" alt="${product.name}" loading="lazy">
+                ${product.is_trending ? '<span class="badge-trending">TENDENCIA</span>' : ''}
+            </div>
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <p class="product-desc">${product.description ? product.description.substring(0, 60) + '...' : 'Sin descripción'}</p>
+                <div class="product-meta">
+                    <span class="price">${price}</span>
+                    <button class="add-btn" onclick="addToCartFromCatalog('${product.id}', '${product.name}', ${product.base_price}, '${finalImage}')">
+                        <i class='bx bx-cart-add'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
 
 function renderArsenalGrid(products, container) {
     if (!products || products.length === 0) {

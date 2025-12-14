@@ -1812,8 +1812,8 @@ input:checked+.slider:before {
 
 .ufo-menu {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1824,8 +1824,8 @@ input:checked+.slider:before {
 /* 1. BOTÓN CENTRAL (TOGGLE) */
 .ufo-toggle {
     position: absolute;
-    width: 135px;
-    height: 135px;
+    width: 100px;
+    height: 100px;
     background: #222237;
     border-radius: 50%;
     cursor: pointer;
