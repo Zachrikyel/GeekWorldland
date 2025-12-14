@@ -881,6 +881,18 @@ function initGlobalEvents() {
             navLeft.classList.toggle('active');
         });
     }
+
+    document.addEventListener('click', (e) => {
+        const nav = document.querySelector('.nav-left');
+        const toggle = document.getElementById('menuToggle');
+
+        if (nav && nav.classList.contains('active')) {
+            if (!nav.contains(e.target) && toggle && !toggle.contains(e.target)) {
+                nav.classList.remove('active');
+                toggle.classList.remove('active'); // También remover el estado del botón
+            }
+        }
+    });
 }
 
 /* HERO SECTION */
@@ -894,7 +906,10 @@ async function loadDynamicHero() {
         .eq('is_trending', true)
         .order('created_at', { ascending: false });
 
-    if (error) console.error("Error Hero:", error);
+    if (error) {
+        console.error("Error Hero:", error);
+        return;
+    }
 
     const isCatalogPage = document.getElementById('productsGrid');
     const btnAction = isCatalogPage
@@ -902,11 +917,12 @@ async function loadDynamicHero() {
         : "location.href='Arsenal-Geek.html'";
 
     let itemsHtml = "";
+
     if (trendingProducts && trendingProducts.length > 0) {
         itemsHtml = trendingProducts.map((product, index) => `
             <div class="item">
                 <img src="${product.card_middle_url}" alt="${product.name}">
-                <div class="introduce neon-card-style">
+                <div class="introduce">
                     <div class="title">TENDENCIA #${index + 1}</div>
                     <div class="topic">${product.name}</div>
                     <div class="des">${product.legend || product.description || "Artefacto disponible."}</div>
@@ -914,6 +930,18 @@ async function loadDynamicHero() {
                 </div>
             </div>
         `).join('');
+    } else {
+        itemsHtml = `
+            <div class="item">
+                <img src="images/Logo Header.png" alt="Geek Worldland">
+                <div class="introduce">
+                    <div class="title">BIENVENIDO</div>
+                    <div class="topic">Geek Worldland</div>
+                    <div class="des">Tu tienda de artículos geek está lista.</div>
+                    <button class="seeMore" onclick="${btnAction}">EXPLORAR ARSENAL &#8595;</button>
+                </div>
+            </div>
+        `;
     }
 
     container.innerHTML = `
@@ -923,10 +951,12 @@ async function loadDynamicHero() {
                 <button id="prevHero"><i class='bx bx-chevron-left'></i></button>
                 <button id="nextHero">></button>
             </div>
-            <div class="carousel-bg-glow"></div>
-        </div>`;
+        </div>
+    `;
 
-    initHeroCarousel();
+    setTimeout(() => {
+        initHeroCarousel();
+    }, 100);
 }
 
 function initHeroCarousel() {
@@ -935,12 +965,15 @@ function initHeroCarousel() {
     const carousel = document.querySelector('.carousel');
     const listHTML = document.querySelector('.carousel .list');
 
-    if (!nextBtn || !carousel) return;
+    if (!nextBtn || !carousel || !listHTML) return;
 
     const showSlider = (type) => {
         carousel.classList.remove('next', 'prev');
-        let items = document.querySelectorAll('.carousel .list .item');
+
+        const items = listHTML.querySelectorAll('.item');
         if (items.length === 0) return;
+
+        void carousel.offsetWidth;
 
         if (type === 'next') {
             listHTML.appendChild(items[0]);
@@ -949,23 +982,57 @@ function initHeroCarousel() {
             listHTML.prepend(items[items.length - 1]);
             carousel.classList.add('prev');
         }
+
+        setTimeout(() => {
+            carousel.classList.remove('next', 'prev');
+        }, 500);
     }
-    let autoRun = setInterval(() => { showSlider('next'); }, 5000);
+    let autoRun = setInterval(() => {
+        showSlider('next');
+    }, 5000);
+
     const resetTimer = () => {
         clearInterval(autoRun);
-        autoRun = setInterval(() => { showSlider('next'); }, 5000);
+        autoRun = setInterval(() => {
+            showSlider('next');
+        }, 5000);
     }
 
-    // Cloning to remove old listeners
     const newNext = nextBtn.cloneNode(true);
     const newPrev = prevBtn.cloneNode(true);
     nextBtn.parentNode.replaceChild(newNext, nextBtn);
     prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+    newNext.onclick = () => {
+        showSlider('next');
+        resetTimer();
+    }
 
-    newNext.onclick = function () { showSlider('next'); resetTimer(); }
-    newPrev.onclick = function () { showSlider('prev'); resetTimer(); }
+    newPrev.onclick = () => {
+        showSlider('prev');
+        resetTimer();
+    }
+
+    carousel.addEventListener('mouseenter', () => {
+        clearInterval(autoRun);
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+        resetTimer();
+    });
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const existingCarousel = document.querySelector('.carousel');
+    if (existingCarousel) {
+        // Ocultar temporalmente hasta que se inicialice
+        existingCarousel.style.visibility = 'hidden';
+
+        setTimeout(() => {
+            initHeroCarousel();
+            existingCarousel.style.visibility = 'visible';
+        }, 100);
+    }
+});
 
 function renderArsenalGrid(products, container) {
     if (!products || products.length === 0) {

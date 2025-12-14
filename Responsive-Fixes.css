@@ -1,0 +1,493 @@
+/* ========== HERO CAROUSEL - VERSIÓN COMPATIBLE ========== */
+
+/* IMPORTANTE: Esto reemplaza la sección del carousel en All.css */
+
+.carousel {
+    position: relative;
+    height: 650px;
+    overflow: hidden;
+    margin-top: 0;
+    background-color: var(--bg-dark);
+    /* Gradiente sin webkit/moz específicos */
+    mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+#hero-dynamic-container {
+    position: relative;
+    z-index: 1;
+    min-height: 650px;
+    background-color: var(--bg-dark);
+}
+
+.carousel .list {
+    position: absolute;
+    width: 1140px;
+    max-width: 90%;
+    height: 80%;
+    left: 50%;
+    top: 50px;
+    transform: translateX(-50%);
+    /* Forzar contexto de apilamiento */
+    transform-style: flat;
+}
+
+.carousel .list .item {
+    position: absolute;
+    left: 0;
+    width: 70%;
+    height: 100%;
+    font-size: 15px;
+    /* Transiciones estándar */
+    transition: transform 0.5s ease, opacity 0.5s ease, left 0.5s ease;
+    /* Hardware acceleration universal */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* POSICIONES CON LEFT EN LUGAR DE TRANSFORM COMPLEJO */
+.carousel .list .item:nth-child(1) {
+    left: -100%;
+    transform: scale(1.5) translateZ(0);
+    filter: blur(30px);
+    z-index: 11;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.carousel .list .item:nth-child(2) {
+    left: 0%;
+    transform: scale(1) translateZ(0);
+    filter: none;
+    z-index: 10;
+    opacity: 1;
+}
+
+.carousel .list .item:nth-child(3) {
+    left: 50%;
+    transform: scale(0.8) translateY(10%) translateZ(0);
+    filter: blur(10px);
+    z-index: 9;
+    opacity: 1;
+}
+
+.carousel .list .item:nth-child(4) {
+    left: 90%;
+    transform: scale(0.5) translateY(20%) translateZ(0);
+    filter: blur(30px);
+    z-index: 8;
+    opacity: 1;
+}
+
+.carousel .list .item:nth-child(5),
+.carousel .list .item:nth-child(n+6) {
+    left: 120%;
+    transform: scale(0.3) translateY(30%) translateZ(0);
+    filter: blur(40px);
+    z-index: 7;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Si solo hay un item */
+.carousel .list .item:only-child {
+    left: 0% !important;
+    transform: scale(1) translateZ(0) !important;
+    filter: none !important;
+    z-index: 10 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* Imagen del producto */
+.carousel .list .item img {
+    width: 50%;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: right 1.5s ease;
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.8));
+}
+
+/* Caja de texto (Glass) */
+.carousel .list .item .introduce {
+    opacity: 0;
+    pointer-events: none;
+    width: 500px;
+    max-width: 90%;
+    position: absolute;
+    top: 50%;
+    left: -270px;
+    transform: translateY(-50%);
+    background: rgba(10, 10, 20, 0.6);
+    /* Backdrop-filter con fallback */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    -moz-backdrop-filter: blur(20px);
+    /* Fallback para navegadores sin soporte */
+    background: rgba(10, 10, 20, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 4px solid var(--primary-cyan);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+.carousel .list .item:nth-child(2) .introduce {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.5s ease 0.3s;
+}
+
+/* Animación de contenido (simplificada) */
+.carousel .list .item:nth-child(2) .introduce .title,
+.carousel .list .item:nth-child(2) .introduce .topic,
+.carousel .list .item:nth-child(2) .introduce .des,
+.carousel .list .item:nth-child(2) .introduce .seeMore {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.carousel .list .item:nth-child(2) .introduce .title {
+    animation-delay: 0.3s;
+}
+
+.carousel .list .item:nth-child(2) .introduce .topic {
+    animation-delay: 0.5s;
+}
+
+.carousel .list .item:nth-child(2) .introduce .des {
+    animation-delay: 0.7s;
+}
+
+.carousel .list .item:nth-child(2) .introduce .seeMore {
+    animation-delay: 0.9s;
+}
+
+/* Flechas */
+.arrows {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1140px;
+    max-width: 90%;
+    display: flex;
+    gap: 20px;
+    z-index: 100;
+}
+
+.arrows button {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--primary-cyan);
+    color: var(--primary-cyan);
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+}
+
+.arrows button:hover {
+    background: var(--primary-cyan);
+    color: black;
+    box-shadow: 0 0 15px var(--primary-cyan);
+}
+
+/* ========== BACKDROP FILTER UNIVERSAL ========== */
+
+/* Clase genérica con fallback */
+.glass-effect {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    -moz-backdrop-filter: blur(15px);
+    /* Fallback sin soporte */
+    background-color: rgba(15, 15, 30, 0.85);
+}
+
+/* Aplicar a elementos que lo necesitan */
+.checkout-section,
+.login-content,
+.cart-modal,
+.product-modal-content::after {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    -moz-backdrop-filter: blur(15px);
+}
+
+/* ========== ANIMACIONES UNIVERSALES ========== */
+
+/* Velocidad consistente en todos los navegadores */
+@keyframes marquee {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+.led-content {
+    animation: marquee 25s linear infinite;
+    will-change: transform;
+}
+
+@keyframes scrollCards {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(calc(-50% - 20px), 0, 0);
+    }
+}
+
+.special-cards-carousel {
+    animation: scrollCards 70s linear infinite;
+    will-change: transform;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+.loader-logo {
+    animation: pulse 2.5s ease-in-out infinite;
+}
+
+/* ========== TRANSFORMS COMPATIBLES ========== */
+
+/* Usar translate3d en lugar de translate2d */
+.monster-card:hover .layer-middle img {
+    transform: scale(1.15) translate3d(0, 0, 0);
+}
+
+.glass-folder:hover {
+    transform: translateY(-20px) skewY(6deg) scale(1.05) translate3d(0, 0, 0);
+}
+
+/* ========== GRADIENTS COMPATIBLES ========== */
+
+.text-gradient-cyber {
+    background: linear-gradient(90deg, #84cc16 0%, #06b6d4 50%, #a855f7 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.2));
+}
+
+/* ========== SCROLLBAR UNIVERSAL ========== */
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #a855f7 #000;
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-purple);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-cyan);
+}
+
+/* ========== FOOTER PARALLAX OPTIMIZADO ========== */
+
+@keyframes parralax {
+    0% {
+        background-position-x: 260px;
+    }
+
+    100% {
+        background-position-x: -10000px;
+    }
+}
+
+.footer__parralax-trees {
+    animation: parralax 120s linear infinite;
+}
+
+.footer__parralax-secondplan {
+    animation: parralax 70s linear infinite;
+}
+
+.footer__parralax-premierplan {
+    animation: parralax 35s linear infinite;
+}
+
+/* ========== PERFORMANCE UNIVERSAL ========== */
+
+/* Hardware acceleration para elementos animados */
+.carousel .list .item,
+.monster-card,
+.glass-folder,
+.review-cell,
+.special-card {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+}
+
+/* Optimizar renders */
+.carousel,
+.products-grid,
+.checkout-container {
+    contain: layout style paint;
+}
+
+/* ========== RESPONSIVE HERO ========== */
+
+@media screen and (max-width: 768px) {
+    .carousel {
+        height: 550px;
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+
+    .carousel .list {
+        width: 95%;
+        height: 100%;
+    }
+
+    /* Reposicionar todo para móvil */
+    .carousel .list .item {
+        width: 90% !important;
+        left: 5% !important;
+        transform: none !important;
+        filter: none !important;
+    }
+
+    .carousel .list .item:nth-child(1),
+    .carousel .list .item:nth-child(3),
+    .carousel .list .item:nth-child(4),
+    .carousel .list .item:nth-child(n+5) {
+        display: none;
+        /* Ocultar items no activos en móvil */
+    }
+
+    .carousel .list .item:nth-child(2) {
+        opacity: 1 !important;
+        z-index: 10 !important;
+    }
+
+    .carousel .list .item img {
+        width: 85%;
+        right: 7.5%;
+        top: 20%;
+        opacity: 0.5;
+        filter: none;
+    }
+
+    .carousel .list .item .introduce {
+        width: 90%;
+        left: 5%;
+        bottom: 70px;
+        top: auto;
+        transform: none;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 100;
+    }
+
+    .introduce .topic {
+        font-size: 2rem;
+    }
+
+    .introduce .des {
+        font-size: 0.95rem;
+    }
+
+    .arrows {
+        bottom: 10px;
+        gap: 10px;
+    }
+
+    .arrows button {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* ========== MODAL PRODUCTO COMPATIBLE ========== */
+
+@keyframes steamGradient {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    50% {
+        background-position: 100% 0%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+.product-modal-content::before {
+    animation: steamGradient 80s linear infinite;
+    background-size: 200% 100%;
+}
+
+/* ========== FLEXBOX/GRID FALLBACKS ========== */
+
+/* Asegurar que funcione sin CSS Grid en navegadores antiguos */
+@supports not (display: grid) {
+    .products-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+/* ========== FIN CORRECCIONES UNIVERSALES ========== */
