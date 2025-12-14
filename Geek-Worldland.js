@@ -92,23 +92,23 @@ async function initDynamicFolders() {
     const styleMap = {
         'arkedia': {
             color: 'purple', icon: 'bx bxs-joystick',
-            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_1_o0wozf.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_2_cmp28r.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_3_bxdav7.png']
+            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_2_cmp28r.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_1_o0wozf.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765670087/Arkedia_3_bxdav7.png']
         },
         'adn-626': {
             color: 'green', icon: 'bx bxs-invader',
-            imgs: ['img4.png', 'img5.png', 'img6.png']
+            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765671749/ADN_-626_2_gizbas.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765671751/ADN_-626_3_eez200.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765671746/ADN_-626_1_igmvga.png']
         },
         'gadgets-espaciales': {
             color: 'cyan', icon: 'bx bxs-home-heart',
-            imgs: ['img1.png', 'img2.png', 'img3.png']
+            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765671206/Gadgets_Espaciales_1_olzxxz.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765671205/Gadgets_Espaciales_3_fnvdoy.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765671205/Gadgets_Espaciales_2_mibwzq.png']
         },
         'game-kom': {
             color: 'orange', icon: 'fa-solid fa-khanda',
-            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765669606/Portales_de_juegos_1_ehpdkz.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765669605/Portales_de_juegos_3_k2zy7n.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765669605/Portales_de_juegos_2_ihsgvc.png']
+            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765669605/Portales_de_juegos_2_ihsgvc.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765669606/Portales_de_juegos_1_ehpdkz.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765669605/Portales_de_juegos_3_k2zy7n.png']
         },
         'zylox-secret': {
             color: 'pink', icon: 'bx bxs-star',
-            imgs: ['img1.png', 'img2.png', 'img3.png']
+            imgs: ['https://res.cloudinary.com/degcddlab/image/upload/v1765671965/Zylox_Secret_1_rfkiri.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765671965/Zylox_Secret_1_rfkiri.png', 'https://res.cloudinary.com/degcddlab/image/upload/v1765671965/Zylox_Secret_1_rfkiri.png']
         },
         'default': {
             color: 'cyan', icon: 'bx bx-folder',
@@ -133,7 +133,6 @@ async function initDynamicFolders() {
     // 3. RENDERIZADO
     container.innerHTML = parents.map(parent => {
         const style = styleMap[parent.slug] || styleMap['default'];
-        const imgPath = "images/";
         const children = allCategories.filter(cat => cat.parent_id === parent.id);
 
         let subCatsText = "";
@@ -163,9 +162,9 @@ async function initDynamicFolders() {
             </div>
             
             <div class="folder-images">
-                <img src="${imgPath}${style.imgs[0]}" class="f-img f-img-1" alt="">
-                <img src="${imgPath}${style.imgs[1]}" class="f-img f-img-2" alt="">
-                <img src="${imgPath}${style.imgs[2]}" class="f-img f-img-3" alt="">
+                <img src="${style.imgs[0]}" class="f-img f-img-1" alt="">
+                <img src="${style.imgs[1]}" class="f-img f-img-2" alt="">
+                <img src="${style.imgs[2]}" class="f-img f-img-3" alt="">
             </div>
             
             <div class="folder-front glass-${style.color}">
@@ -570,3 +569,4 @@ function initContactLogic() {
     });
 
 }
+
