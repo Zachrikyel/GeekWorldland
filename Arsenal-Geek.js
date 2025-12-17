@@ -104,15 +104,15 @@ window.applySearchFromOverlay = function (query) {
 async function setupPriceSlider() {
     const { data, error } = await supabase
         .from('products')
-        .select('base_price')
-        .order('base_price', { ascending: false })
+        .select('sale_price')
+        .order('sale_price', { ascending: false })
         .limit(1);
 
     const slider = document.getElementById('priceSlicer');
     let maxPrice = 1000000;
 
     if (data && data.length > 0) {
-        maxPrice = data[0].base_price;
+        maxPrice = data[0].sale_price;
     }
 
     if (slider) {
@@ -299,7 +299,7 @@ function renderProducts(productsList) {
                 <div class="info-separator"></div>
                 <div class="info-footer-compact">
                     <div class="price-tag-compact">
-                        <span class="currency">$</span>${p.base_price.toLocaleString('es-CO')}
+                        <span class="currency">$</span>${p.sale_price.toLocaleString('es-CO')}
                     </div>
                     
                     <button class="add-btn-glass" onclick="event.stopPropagation(); addToCartFromGrid(${p.id})">
@@ -365,7 +365,7 @@ function applyFilters() {
     // 🔍 FILTRADO CON BÚSQUEDA
     const filtered = localProducts.filter(p => {
         // A. Precio
-        const passPrice = p.base_price <= priceLimit;
+        const passPrice = p.sale_price <= priceLimit;
 
         // B. 🔍 BÚSQUEDA (PRIORIDAD MÁXIMA)
         let passSearch = true;
@@ -422,7 +422,7 @@ window.openProductView = async function (id) {
     document.getElementById('pmTitle').innerText = modalProduct.name;
     document.getElementById('pmLegend').innerText = modalProduct.legend || "";
     document.getElementById('pmDescription').innerText = modalProduct.description || "Datos clasificados.";
-    document.getElementById('pmPrice').innerText = modalProduct.base_price.toLocaleString('es-CO');
+    document.getElementById('pmPrice').innerText = modalProduct.sale_price.toLocaleString('es-CO');
 
     renderStockStatus(modalProduct.stock_quantity);
     renderColorSelector();
