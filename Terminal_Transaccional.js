@@ -103,7 +103,7 @@ function renderCheckoutSummary() {
     }
 
     container.innerHTML = cart.map((item, index) => {
-        currentProductsTotal += item.sale_price * item.quantity;
+        currentProductsTotal += item.compare_at_price * item.quantity;
         const imgSrc = item.card_middle_url || item.image_url || 'images/Logo Header.png';
 
         // --- NUEVO CÓDIGO: LÓGICA DE VISUALIZACIÓN DE VARIANTE ---
@@ -121,7 +121,7 @@ function renderCheckoutSummary() {
 
             <p>Cant: ${item.quantity}</p>
         </div>
-        <div class="prod-price">$${(item.sale_price * item.quantity).toLocaleString('es-CO')}</div>
+        <div class="prod-price">$${(item.compare_at_price * item.quantity).toLocaleString('es-CO')}</div>
         <button class="btn-delete-item" onclick="removeItem(${index})" title="Expulsar del arsenal">
             <i class='bx bxs-trash'></i>
         </button>
@@ -326,8 +326,8 @@ window.processPayment = async function () {
                 order_id: orderData.id,
                 product_id: item.id,
                 quantity: item.quantity,
-                unit_price: item.sale_price,
-                subtotal: item.sale_price * item.quantity,
+                unit_price: item.compare_at_price,
+                subtotal: item.compare_at_price * item.quantity,
                 selected_color: item.selected_color || 'Base',
                 selected_size: item.selected_size || null,
                 custom_notes: item.custom_notes || null
