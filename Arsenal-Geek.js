@@ -102,14 +102,16 @@ window.applySearchFromOverlay = function (query) {
 
 /// SLIDER ///
 async function setupPriceSlider() {
-    const { data, error } = await supabaseClientClient
+    const { data, error } = await window.supabaseClient
         .from('products')
         .select('compare_at_price')
+        .not('compare_at_price', 'is', null)  // 🛡️ Filtrar nulls
+        .gt('compare_at_price', 0)            // 🛡️ Filtrar ceros
         .order('compare_at_price', { ascending: false })
         .limit(1);
 
     const slider = document.getElementById('priceSlicer');
-    let maxPrice = 1000000;
+    let maxPrice = 1000000; // Valor por defecto
 
     if (data && data.length > 0) {
         maxPrice = data[0].compare_at_price;
@@ -162,7 +164,7 @@ async function loadCategories() {
     const container = document.getElementById('categoriesContainer');
     if (!supabaseClient) return;
 
-    const { data: allCats, error } = await window._supabase.Client.from('categories').select('*').order('display_order');
+    const { data: allCats, error } = await supabaseClient.from('categories').select('*').order('display_order');
     if (error) return;
 
     localCategories = allCats;
@@ -246,15 +248,17 @@ window.filterByCategory = (identifier, e) => {
 async function loadProducts() {
     const grid = document.getElementById('productsGrid');
 
-    const { data, error } = await supabaseClientClient
+    const { data, error } = await window.supabaseClient
         .from('products')
         .select(`*, categories(name), product_colors(*)`)
         .eq('is_published', true)
+        .not('compare_at_price', 'is', null)  // 🛡️ Excluir productos sin precio
+        .gt('compare_at_price', 0)            // 🛡️ Excluir productos con precio = 0
         .order('display_order', { ascending: true });
 
     if (error) {
         grid.innerHTML = `<div class="error-msg">❌ Error crítico en sensores: ${error.message}</div>`;
-        console.error("supabaseClient Error:", error);
+        console.error("Supabase Error:", error);
         return;
     }
 
@@ -287,6 +291,14 @@ function renderProducts(productsList) {
             ? `<div class="full-layer layer-front"><img src="${p.card_front_url}" alt="${p.name}-front"></div>`
             : '';
 
+        // 🛡️ LÓGICA DE PRECIOS UNIFICADA
+        const rawSale = p.sale_price || 0;
+        const rawCompare = p.compare_at_price || 0;
+
+        // Regla: Si sale_price existe y es válido, es el precio real. Si no, usa compare.
+        const finalPrice = (rawSale > 0) ? rawSale : rawCompare;
+        const showOffer = (rawSale > 0 && rawCompare > rawSale);
+
         return `
         <div class="monster-card" onclick="openProductView(${p.id})">
             <div class="card-bg" style="${backUrl ? `background-image: url('${backUrl}')` : 'background: radial-gradient(#2a2a40, #0f0f1a)'}"></div>
@@ -299,7 +311,8 @@ function renderProducts(productsList) {
                 <div class="info-separator"></div>
                 <div class="info-footer-compact">
                     <div class="price-tag-compact">
-                        <span class="currency">$</span>${p.compare_at_price.toLocaleString('es-CO')}
+                        <span class="currency">$</span>${finalPrice.toLocaleString('es-CO')}
+                        ${showOffer ? `<span style="font-size:0.7em; text-decoration:line-through; color:#aaa; margin-left:4px;">$${rawCompare.toLocaleString('es-CO')}</span>` : ''}
                     </div>
                     
                     <button class="add-btn-glass" onclick="event.stopPropagation(); addToCartFromGrid(${p.id})">
@@ -410,7 +423,8 @@ window.openProductView = async function (id) {
     document.getElementById('productModal').classList.add('active');
     document.getElementById('pmTitle').innerText = "RECUPERANDO DATOS...";
 
-    const { data, error } = await supabaseClientClient.rpc('get_product_full_detail', { p_id: id });
+    // 🛡️ FIX 1: window.supabaseClient (estaba sin window.)
+    const { data, error } = await window.supabaseClient.rpc('get_product_full_detail', { p_id: id });
 
     if (error || !data) {
         console.error("Fallo crítico en DB:", error);
@@ -422,9 +436,37 @@ window.openProductView = async function (id) {
     document.getElementById('pmTitle').innerText = modalProduct.name;
     document.getElementById('pmLegend').innerText = modalProduct.legend || "";
     document.getElementById('pmDescription').innerText = modalProduct.description || "Datos clasificados.";
-    document.getElementById('pmPrice').innerText = modalProduct.compare_at_price.toLocaleString('es-CO');
 
-    renderStockStatus(modalProduct.stock_quantity);
+    // 🛡️ FIX 2: Validar precio (Con Fallback a LocalStorage si el RPC falla)
+    let displayPrice = 0;
+
+    // A. Intentar leer del objeto RPC
+    const rpcSale = modalProduct.sale_price || 0;
+    const rpcCompare = modalProduct.compare_at_price || 0;
+
+    // B. Si ambos son 0, buscar en localProducts (Grid data) que es seguro
+    if (rpcSale === 0 && rpcCompare === 0) {
+        console.warn("⚠️ RPC retornó precios vacíos. Buscando respaldo local...");
+        const localBackup = localProducts.find(p => p.id === id);
+        if (localBackup) {
+            displayPrice = (localBackup.sale_price > 0) ? localBackup.sale_price : localBackup.compare_at_price;
+            // Inyectamos el precio recuperado al objeto modalProduct para que el carrito lo use
+            modalProduct.final_calculated_price = displayPrice;
+        }
+    } else {
+        // Lógica estándar
+        displayPrice = (rpcSale > 0) ? rpcSale : rpcCompare;
+        modalProduct.final_calculated_price = displayPrice;
+    }
+
+    document.getElementById('pmPrice').innerText = displayPrice > 0
+        ? `$${displayPrice.toLocaleString('es-CO')}`
+        : 'Consultar';
+
+    // 🛡️ FIX 3: Validar stock (puede venir como null o undefined)
+    const stockQty = modalProduct.stock_quantity || 0;
+    renderStockStatus(stockQty);
+
     renderColorSelector();
     document.getElementById('pmQty').value = 1;
 };
@@ -537,7 +579,9 @@ window.addToCartFromModal = function () {
     if (window.addToCart && modalProduct) {
         const productToSend = {
             ...modalProduct,
-            selected_color: selectedColorName
+            selected_color: selectedColorName,
+            // Usamos el precio ya calculado y sanitizado en openProductView
+            base_price: modalProduct.final_calculated_price || 0
         };
 
         addToCart(productToSend, qty);
@@ -550,8 +594,19 @@ window.addToCartFromModal = function () {
 window.addToCartFromGrid = function (id) {
     const productObj = localProducts.find(p => p.id === id);
     if (productObj && window.addToCart) {
-        console.log(`📦 Añadiendo desde Grid: ${productObj.name}`);
-        addToCart(productObj, 1);
+        // Calcular precio correcto antes de enviar
+        const rawSale = productObj.sale_price || 0;
+        const rawCompare = productObj.compare_at_price || 0;
+        const finalPrice = (rawSale > 0) ? rawSale : rawCompare;
+
+        // Inyectar precio calculado
+        const productToSend = {
+            ...productObj,
+            base_price: finalPrice
+        };
+
+        console.log(`📦 Añadiendo desde Grid: ${productObj.name} | Precio: ${finalPrice}`);
+        addToCart(productToSend, 1);
     } else {
         console.error("❌ Error: Artefacto no encontrado en memoria local.");
     }

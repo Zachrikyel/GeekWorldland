@@ -1,3 +1,5 @@
+const supabaseClient = window.supabaseClient;
+
 const colombiaData = {
     "Amazonas": ["Leticia", "Puerto Nariño"],
     "Antioquia": ["Medellín", "Bello", "Itagüí", "Envigado", "Apartadó", "Rionegro", "Turbo", "Caucasia", "Sabaneta", "La Estrella"],
@@ -103,7 +105,11 @@ function renderCheckoutSummary() {
     }
 
     container.innerHTML = cart.map((item, index) => {
-        currentProductsTotal += item.compare_at_price * item.quantity;
+        // 🛡️ LÓGICA DE PRECIOS TRANSACCIONAL
+        // Prioridad: base_price (ya calculado en carrito) > sale_price > compare_at_price
+        const unitPrice = item.base_price || (item.sale_price > 0 ? item.sale_price : item.compare_at_price) || 0;
+
+        currentProductsTotal += unitPrice * item.quantity;
         const imgSrc = item.card_middle_url || item.image_url || 'images/Logo Header.png';
 
         // --- NUEVO CÓDIGO: LÓGICA DE VISUALIZACIÓN DE VARIANTE ---
@@ -121,7 +127,7 @@ function renderCheckoutSummary() {
 
             <p>Cant: ${item.quantity}</p>
         </div>
-        <div class="prod-price">$${(item.compare_at_price * item.quantity).toLocaleString('es-CO')}</div>
+        <div class="prod-price">$${(unitPrice * item.quantity).toLocaleString('es-CO')}</div>
         <button class="btn-delete-item" onclick="removeItem(${index})" title="Expulsar del arsenal">
             <i class='bx bxs-trash'></i>
         </button>
@@ -326,8 +332,9 @@ window.processPayment = async function () {
                 order_id: orderData.id,
                 product_id: item.id,
                 quantity: item.quantity,
-                unit_price: item.compare_at_price,
-                subtotal: item.compare_at_price * item.quantity,
+                // Usamos el precio final real calculado
+                unit_price: item.base_price || (item.sale_price > 0 ? item.sale_price : item.compare_at_price) || 0,
+                subtotal: (item.base_price || (item.sale_price > 0 ? item.sale_price : item.compare_at_price) || 0) * item.quantity,
                 selected_color: item.selected_color || 'Base',
                 selected_size: item.selected_size || null,
                 custom_notes: item.custom_notes || null

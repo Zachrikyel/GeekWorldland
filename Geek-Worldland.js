@@ -1,7 +1,7 @@
 /// VARIABLES ///
-const supabaseClientClient = window._supabaseClient; // ✅ RENOMBRADO para evitar conflicto
+const supabaseClient = window.supabaseClient; // ✅ RENOMBRADO para evitar conflicto
 
-if (!supabaseClientClient) console.error("🚨 Error: Geek-Worldland no detectó la conexión a supabaseClient.");
+if (!supabaseClient) console.error("🚨 Error: Geek-Worldland no detectó la conexión a supabaseClient.");
 document.addEventListener('DOMContentLoaded', () => {
     // Detectar si estamos en la Home
     const isHomePage = document.querySelector('.access-levels-section');
@@ -120,7 +120,7 @@ async function initDynamicFolders() {
     };
 
     // 2. CONSULTA DB
-    const { data: allCategories, error } = await supabaseClientClient
+    const { data: allCategories, error } = await supabaseClient
         .from('categories')
         .select('id, name, slug, parent_id, display_order, description')
         .order('display_order', { ascending: true });
@@ -190,7 +190,7 @@ async function initReviewsCarousel() {
     const container = document.getElementById('reviewsCarousel');
     if (!container) return;
 
-    const { data: reviewsData, error } = await supabaseClientClient
+    const { data: reviewsData, error } = await supabaseClient
         .from('reviews')
         .select(`
             rating,
@@ -386,7 +386,7 @@ async function calculateGlobalRating() {
     if (!container) return;
 
     // Pedimos SOLO el rating de TODAS las reseñas (para ser precisos en el promedio)
-    const { data: allRatings, error } = await supabaseClientClient
+    const { data: allRatings, error } = await supabaseClient
         .from('reviews')
         .select('rating');
 
@@ -512,7 +512,7 @@ function initContactLogic() {
 
         try {
             // 5. INTENTO 1: GUARDAR EN supabaseClient
-            const { error: dbError } = await supabaseClientClient
+            const { error: dbError } = await supabaseClient
                 .from('contact_messages')
                 .insert([{
                     name: nameVal,

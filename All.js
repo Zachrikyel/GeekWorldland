@@ -7,9 +7,9 @@ let client = null;
 
 function initSupabase() {
     try {
-        if (window.supabase && window.supabase.createClient) {
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
             client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            window._supabase = client; // Guardamos en global
+            window.supabaseClient = client; // Guardamos en global
             console.log("✅ Supabase inicializado correctamente");
             return true;
         } else {
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadDynamicHero();
     }
 
-    if (window._supabaseClient) { // ✅ CORREGIDO
+    if (window.supabaseClient) { // ✅ CORREGIDO
         console.log("🛸 Sistema conectado a la Base de Datos");
     } else {
         console.error("🔴 Error crítico: Librería supabaseClient no cargada.");
@@ -342,7 +342,7 @@ function injectGlobalModals() {
 let dotLottieInstance = null;
 
 window.openLoginModal = async function () {
-    const { data: { user } } = await supabaseClientClient.auth.getUser();
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
     if (user) {
         console.log("✅ Usuario detectado. Actualizando interfaz...");
         updateHeaderUser(user);
@@ -405,7 +405,7 @@ window.loginWithGoogle = async function () {
     console.log("📡 Iniciando protocolo OAuth con Google...");
     const cleanRedirectURL = window.location.origin + window.location.pathname;
     console.log("🎯 Redireccionando a:", cleanRedirectURL);
-    const { error } = await supabaseClientClient.auth.signInWithOAuth({
+    const { error } = await window.supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
             redirectTo: cleanRedirectURL,
@@ -426,7 +426,7 @@ window.loginWithGoogle = async function () {
 window.openLoginModal = async function () {
     console.log("🔓 Abriendo modal de login...");
 
-    const { data: { user } } = await supabaseClientClient.auth.getUser();
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
 
     if (user) {
         console.log("✅ Usuario ya conectado:", user.email);
@@ -469,7 +469,7 @@ window.performLogout = async function () {
     console.log("🔌 Iniciando cierre de sesión...");
 
     try {
-        const { error } = await supabaseClientClient.auth.signOut();
+        const { error } = await window.supabaseClient.auth.signOut();
 
         if (error) {
             console.error("Error al cerrar sesión:", error);
@@ -505,7 +505,7 @@ async function updateHeaderUser(user) {
 
     try {
         if (!avatarUrl) {
-            const { data: profile, error } = await supabaseClientClient
+            const { data: profile, error } = await window.supabaseClient
                 .from('users')
                 .select('avatar_url, full_name, ranks ( name )')
                 .eq('id', user.id)
@@ -526,7 +526,7 @@ async function updateHeaderUser(user) {
 
     let userRank = "Explorador";
     try {
-        const { data } = await supabaseClientClient
+        const { data } = await window.supabaseClient
             .from('users')
             .select('ranks ( name )')
             .eq('id', user.id)
@@ -641,7 +641,7 @@ async function updateHeaderUser(user) {
 function initAuthListener() {
     console.log("🎧 Inicializando listener de autenticación...");
 
-    supabaseClient.auth.getUser().then(({ data: { user } }) => {
+    window.supabaseClient.auth.getUser().then(({ data: { user } }) => {
         if (user) {
             console.log("👤 Usuario detectado al cargar:", user.email);
             updateHeaderUser(user);
@@ -650,7 +650,7 @@ function initAuthListener() {
         }
     });
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
         console.log("🔔 Cambio de estado:", event);
 
         if (event === 'SIGNED_IN' && session?.user && !hasShownWelcome) {
@@ -671,12 +671,13 @@ function initAuthListener() {
             const menu = document.getElementById('zyloxUserMenu');
             if (menu) menu.remove();
         }
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-            if (event === 'PASSWORD_RECOVERY') {
-                console.log("🚨 Modo Recuperación detectado. Redirigiendo...");
-                window.location.href = '/reset-password.html';
-            }
-        });
+    });
+
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+            console.log("🚨 Modo Recuperación detectado. Redirigiendo...");
+            window.location.href = '/reset-password.html';
+        }
     });
 }
 
@@ -725,7 +726,7 @@ window.handleLogin = async function (e) {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
-    const { data, error } = await supabaseClientClient.auth.signInWithPassword({
+    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
     });
@@ -759,7 +760,7 @@ window.handleRegister = async function (e) {
     const randomSuffix = Math.floor(Math.random() * 1000);
     const cleanUsername = inputName.trim().toLowerCase().replace(/[^a-z0-9]/g, '_') + "_" + randomSuffix;
 
-    const { data, error } = await supabaseClientClient.auth.signUp({
+    const { data, error } = await window.supabaseClient.auth.signUp({
         email: email,
         password: password,
         options: {
@@ -792,7 +793,7 @@ window.handleRecovery = async function (e) {
     showMessage('📡 Buscando usuario...', 'neutral');
     const email = document.getElementById('rec-email').value;
     const redirectUrl = 'https://geekworldland.com/reset-password.html';
-    const { data, error } = await supabaseClientClient.auth.resetPasswordForEmail(email, {
+    const { data, error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl,
     });
 
@@ -826,7 +827,7 @@ function openLogoutModal(userName) {
         confirmBtn.onclick = async () => {
             confirmBtn.innerText = "Desconectando...";
             try {
-                await supabaseClientClient.auth.signOut();
+                await window.supabaseClient.auth.signOut();
                 window.location.reload();
             } catch (err) {
                 console.error("Error logout:", err);
@@ -970,9 +971,9 @@ function initGlobalEvents() {
 /* HERO SECTION */
 async function loadDynamicHero() {
     const container = document.getElementById('hero-dynamic-container');
-    if (!container || !supabaseClient) return;
+    if (!container || !window.supabaseClient) return;
 
-    const { data: trendingProducts, error } = await supabaseClientClient
+    const { data: trendingProducts, error } = await window.supabaseClient
         .from('products')
         .select('name, legend, description, card_middle_url')
         .eq('is_trending', true)
@@ -1066,7 +1067,14 @@ function renderArsenalGrid(products, container) {
     }
 
     container.innerHTML = products.map(product => {
-        const price = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(product.base_price);
+        // 🛡️ PROTECCIÓN: Si es null/undefined, usa 0
+        const finalPrice = product.sale_price || product.compare_at_price || 0;
+
+        // 🛡️ PROTECCIÓN: Solo formatea si el precio es válido
+        const price = finalPrice > 0
+            ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(finalPrice)
+            : 'Consultar';
+
         const finalImage = product.card_middle_url || product.card_front_url || 'images/Logo Header.png';
 
         return `
@@ -1080,7 +1088,7 @@ function renderArsenalGrid(products, container) {
                 <p class="product-desc">${product.description ? product.description.substring(0, 60) + '...' : 'Sin descripción'}</p>
                 <div class="product-meta">
                     <span class="price">${price}</span>
-                    <button class="add-btn" onclick="addToCartFromCatalog('${product.id}', '${product.name}', ${product.base_price}, '${finalImage}')">
+                    <button class="add-btn" onclick="addToCartFromCatalog('${product.id}', '${product.name}', ${finalPrice}, '${finalImage}')">
                         <i class='bx bx-cart-add'></i>
                     </button>
                 </div>
@@ -1105,7 +1113,14 @@ function renderArsenalGrid(products, container) {
     }
 
     container.innerHTML = products.map(product => {
-        const price = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(product.base_price);
+        // 🛡️ PROTECCIÓN: Si es null/undefined, usa 0
+        const finalPrice = product.sale_price || product.compare_at_price || 0;
+
+        // 🛡️ PROTECCIÓN: Solo formatea si el precio es válido
+        const price = finalPrice > 0
+            ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(finalPrice)
+            : 'Consultar';
+
         const finalImage = product.card_middle_url || product.card_front_url || 'images/Logo Header.png';
 
         return `
@@ -1119,7 +1134,7 @@ function renderArsenalGrid(products, container) {
                 <p class="product-desc">${product.description ? product.description.substring(0, 60) + '...' : 'Sin descripción'}</p>
                 <div class="product-meta">
                     <span class="price">${price}</span>
-                    <button class="add-btn" onclick="addToCartFromCatalog('${product.id}', '${product.name}', ${product.base_price}, '${finalImage}')">
+                    <button class="add-btn" onclick="addToCartFromCatalog('${product.id}', '${product.name}', ${finalPrice}, '${finalImage}')">
                         <i class='bx bx-cart-add'></i>
                     </button>
                 </div>
@@ -1147,7 +1162,7 @@ function addToCart(product, quantity = 1) {
     if (existingItem) {
         existingItem.quantity += quantity;
     } else {
-        const price = product.price || product.base_price || 0;
+        const price = product.base_price || (product.sale_price > 0 ? product.sale_price : product.compare_at_price) || 0;
         cart.push({
             ...product,
             uniqueId: uniqueCartId,
@@ -1201,22 +1216,26 @@ function updateCart() {
             ? `<span style="font-size:0.8rem; color:var(--primary-lime); display:block;">Color: ${item.selected_color}</span>`
             : '';
 
+        // 🛡️ PROTECCIÓN: Asegurar que base_price no sea null
+        const itemPrice = item.base_price || 0;
+
         return `
-        <div class="cart-item ${isMvp}" ${delayStyle}>
-            <button class="remove-btn" onclick="removeFromCart('${item.uniqueId}')" title="Purgar Espécimen">
-                <i class='bx bxs-trash'></i>
-            </button>
-            
-            <img src="${displayImage}" alt="${item.name}" onerror="this.src='images/Initial Background.png'">
-            
-            <div class="cart-item-info">
-                <h4 style="font-size:1.3rem; margin-bottom:2px; color:white;">${item.name}</h4>
-                ${colorDisplay} <p class="cart-item-price" style="color:var(--primary-cyan); font-weight:bold;">$${item.base_price.toLocaleString('es-CO')}</p>
-                <p class="cart-item-qty" style="font-size:0.8rem; color:#aaa;">Cant: ${item.quantity}</p>
-            </div>
-            
-            ${isMvp ? '<div style="position:absolute; top:8px; left:8px; font-size:0.65rem; background:var(--primary-lime); color:black; padding:2px 6px; border-radius:4px; font-weight:bold; box-shadow:0 0 10px var(--primary-lime);">MVP</div>' : ''}
-        </div>`;
+    <div class="cart-item ${isMvp}" ${delayStyle}>
+        <button class="remove-btn" onclick="removeFromCart('${item.uniqueId}')" title="Purgar Espécimen">
+            <i class='bx bxs-trash'></i>
+        </button>
+        
+        <img src="${displayImage}" alt="${item.name}" onerror="this.src='images/Initial Background.png'">
+        
+        <div class="cart-item-info">
+            <h4 style="font-size:1.3rem; margin-bottom:2px; color:white;">${item.name}</h4>
+            ${colorDisplay} 
+            <p class="cart-item-price" style="color:var(--primary-cyan); font-weight:bold;">$${itemPrice.toLocaleString('es-CO')}</p>
+            <p class="cart-item-qty" style="font-size:0.8rem; color:#aaa;">Cant: ${item.quantity}</p>
+        </div>
+        
+        ${isMvp ? '<div style="position:absolute; top:8px; left:8px; font-size:0.65rem; background:var(--primary-lime); color:black; padding:2px 6px; border-radius:4px; font-weight:bold; box-shadow:0 0 10px var(--primary-lime);">MVP</div>' : ''}
+    </div>`;
     }).join('');
 }
 
