@@ -1,14 +1,35 @@
-/// CONFIGURACION supabaseClient ///
-const supabaseClient_URL = 'https://stjvnjmqezdcxsdodnfc.supabaseClient.co';
-const supabaseClient_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0anZuam1xZXpkY3hzZG9kbmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNTE5NTUsImV4cCI6MjA3OTkyNzk1NX0.nh111C74tbdSreSdn7sRQlI8PPNnOCpod-Y1nD3210o';
-const { createClient } = window.supabaseClient || {};
+/// CONFIGURACION SUPABASE ///
+const SUPABASE_URL = 'https://stjvnjmqezdcxsdodnfc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0anZuam1xZXpkY3hzZG9kbmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNTE5NTUsImV4cCI6MjA3OTkyNzk1NX0.nh111C74tbdSreSdn7sRQlI8PPNnOCpod-Y1nD3210o';
 
-if (createClient) {
-    window._supabaseClient = createClient(supabaseClient_URL, supabaseClient_KEY);
-    console.log("✅ supabaseClient inicializado correctamente");
-} else {
-    console.error("❌ Error: La librería de supabaseClient no se cargó");
-    window._supabaseClient = null;
+// ✅ ESPERAR A QUE LA LIBRERÍA CARGUE
+let client = null;
+
+function initSupabase() {
+    try {
+        if (window.supabase && window.supabase.createClient) {
+            client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            window._supabase = client; // Guardamos en global
+            console.log("✅ Supabase inicializado correctamente");
+            return true;
+        } else {
+            console.warn("⏳ Librería Supabase aún no disponible, reintentando...");
+            return false;
+        }
+    } catch (error) {
+        console.error("❌ Error inicializando Supabase:", error);
+        return false;
+    }
+}
+
+// Intentar inicializar inmediatamente
+if (!initSupabase()) {
+    // Si falla, reintentar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSupabase);
+    } else {
+        setTimeout(initSupabase, 100);
+    }
 }
 
 /// VARIABLES ///

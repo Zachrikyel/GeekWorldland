@@ -1,4 +1,3 @@
-const supabaseClient = window._supabase; //
 /// VARIABLES ///
 let localProducts = [];
 let localCategories = [];
@@ -163,7 +162,7 @@ async function loadCategories() {
     const container = document.getElementById('categoriesContainer');
     if (!supabaseClient) return;
 
-    const { data: allCats, error } = await window._supabaseClient.from('categories').select('*').order('display_order');
+    const { data: allCats, error } = await window._supabase.Client.from('categories').select('*').order('display_order');
     if (error) return;
 
     localCategories = allCats;
