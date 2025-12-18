@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadDynamicHero();
     }
 
-    if (supabase) {
+    if (window._supabase) { // ✅ CORREGIDO
         console.log("🛸 Sistema conectado a la Base de Datos");
     } else {
         console.error("🔴 Error crítico: Librería Supabase no cargada.");

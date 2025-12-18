@@ -1,3 +1,4 @@
+const supabase = window._supabase; // 🌉 PUENTE VITAL
 /// VARIABLES ///
 let localProducts = [];
 let localCategories = [];

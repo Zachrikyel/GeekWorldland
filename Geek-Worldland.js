@@ -1,4 +1,6 @@
 /// VARIABLES ///
+const supabase = window._supabase; // 🌉 PUENTE VITAL
+if (!supabase) console.error("🚨 Error: Geek-Worldland no detectó la conexión a Supabase.");
 document.addEventListener('DOMContentLoaded', () => {
     // Detectar si estamos en la Home
     const isHomePage = document.querySelector('.access-levels-section');

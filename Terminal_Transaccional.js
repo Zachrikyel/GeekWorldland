@@ -1,3 +1,4 @@
+const supabase = window._supabase; // 🌉 PUENTE VITAL
 const colombiaData = {
     "Amazonas": ["Leticia", "Puerto Nariño"],
     "Antioquia": ["Medellín", "Bello", "Itagüí", "Envigado", "Apartadó", "Rionegro", "Turbo", "Caucasia", "Sabaneta", "La Estrella"],
