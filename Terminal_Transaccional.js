@@ -1,4 +1,4 @@
-const supabase = window._supabase; // 🌉 PUENTE VITAL
+const supabaseClient = window._supabase; // ✅ RENOMBRADO
 const colombiaData = {
     "Amazonas": ["Leticia", "Puerto Nariño"],
     "Antioquia": ["Medellín", "Bello", "Itagüí", "Envigado", "Apartadó", "Rionegro", "Turbo", "Caucasia", "Sabaneta", "La Estrella"],
@@ -176,7 +176,7 @@ window.applyDiscount = async function () {
     btn.textContent = "...";
     btn.disabled = true;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClientClient
         .from('coupons')
         .select('*')
         .eq('code', code)
@@ -200,15 +200,15 @@ window.applyDiscount = async function () {
 
 // ========== PRE-LLENAR DATOS ==========
 async function checkUserAndPrefill() {
-    if (!supabase) return;
-    const { data: { user } } = await supabase.auth.getUser();
+    if (!supabaseClient) return;
+    const { data: { user } } = await supabaseClientClient.auth.getUser();
 
     if (user) {
         const saveCheck = document.getElementById('saveInfoCheck');
         if (saveCheck) saveCheck.checked = true;
 
-        const { data: profile } = await window._supabase.from('users').select('*').eq('id', user.id).single();
-        const { data: address } = await window._supabase.from('user_addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false }).limit(1).single();
+        const { data: profile } = await window._supabaseClient.from('users').select('*').eq('id', user.id).single();
+        const { data: address } = await window._supabaseClient.from('user_addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false }).limit(1).single();
 
         if (profile) {
             if (document.getElementById('fullName')) document.getElementById('fullName').value = profile.full_name || '';
@@ -276,12 +276,12 @@ window.processPayment = async function () {
 
     try {
         // 2. OBTENER USUARIO
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await supabaseClientClient.auth.getUser();
         if (!user) throw new Error("Debes iniciar sesión.");
 
         // 3. GUARDAR DATOS Y PERMISOS
         if (document.getElementById('saveInfoCheck').checked) {
-            await window._supabase.from('users').update({
+            await window._supabaseClient.from('users').update({
                 full_name: document.getElementById('fullName').value,
                 phone: document.getElementById('phone1').value,
                 marketing_consent: document.getElementById('promoConsentCheck').checked
@@ -294,7 +294,7 @@ window.processPayment = async function () {
         const currency = 'COP';
 
         // 5. CREAR ORDEN EN BASE DE DATOS
-        const { data: orderData, error: orderError } = await supabase
+        const { data: orderData, error: orderError } = await supabaseClientClient
             .from('orders')
             .insert([{
                 user_id: user.id,
@@ -334,7 +334,7 @@ window.processPayment = async function () {
                 custom_notes: item.custom_notes || null
             }));
 
-            const { error: itemsError } = await supabase
+            const { error: itemsError } = await supabaseClientClient
                 .from('order_items')
                 .insert(orderItems);
 
@@ -446,8 +446,8 @@ async function checkTransactionStatus() {
         console.log("📝 Referencia:", reference);
 
         if (status === 'APPROVED') {
-            // 2. ACTUALIZAR ORDEN EN SUPABASE
-            const { data: updateData, error: updateError } = await supabase
+            // 2. ACTUALIZAR ORDEN EN supabaseClient
+            const { data: updateData, error: updateError } = await supabaseClientClient
                 .from('orders')
                 .update({
                     status: 'paid',

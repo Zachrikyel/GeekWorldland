@@ -1,6 +1,7 @@
 /// VARIABLES ///
-const supabase = window._supabase; // 🌉 PUENTE VITAL
-if (!supabase) console.error("🚨 Error: Geek-Worldland no detectó la conexión a Supabase.");
+const supabaseClientClient = window._supabaseClient; // ✅ RENOMBRADO para evitar conflicto
+
+if (!supabaseClientClient) console.error("🚨 Error: Geek-Worldland no detectó la conexión a supabaseClient.");
 document.addEventListener('DOMContentLoaded', () => {
     // Detectar si estamos en la Home
     const isHomePage = document.querySelector('.access-levels-section');
@@ -119,7 +120,7 @@ async function initDynamicFolders() {
     };
 
     // 2. CONSULTA DB
-    const { data: allCategories, error } = await supabase
+    const { data: allCategories, error } = await supabaseClientClient
         .from('categories')
         .select('id, name, slug, parent_id, display_order, description')
         .order('display_order', { ascending: true });
@@ -189,7 +190,7 @@ async function initReviewsCarousel() {
     const container = document.getElementById('reviewsCarousel');
     if (!container) return;
 
-    const { data: reviewsData, error } = await supabase
+    const { data: reviewsData, error } = await supabaseClientClient
         .from('reviews')
         .select(`
             rating,
@@ -202,7 +203,7 @@ async function initReviewsCarousel() {
         .order('created_at', { ascending: false })
         .limit(5);
 
-    console.log("📡 DATOS CRUDOS DE SUPABASE:", reviewsData);
+    console.log("📡 DATOS CRUDOS DE supabaseClient:", reviewsData);
 
     if (error) {
         console.error("Error en la transmisión de datos:", error);
@@ -385,7 +386,7 @@ async function calculateGlobalRating() {
     if (!container) return;
 
     // Pedimos SOLO el rating de TODAS las reseñas (para ser precisos en el promedio)
-    const { data: allRatings, error } = await supabase
+    const { data: allRatings, error } = await supabaseClientClient
         .from('reviews')
         .select('rating');
 
@@ -510,8 +511,8 @@ function initContactLogic() {
         `.trim();
 
         try {
-            // 5. INTENTO 1: GUARDAR EN SUPABASE
-            const { error: dbError } = await supabase
+            // 5. INTENTO 1: GUARDAR EN supabaseClient
+            const { error: dbError } = await supabaseClientClient
                 .from('contact_messages')
                 .insert([{
                     name: nameVal,

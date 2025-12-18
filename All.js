@@ -1,10 +1,15 @@
-/// CONFIGURACION SUPABASE ///
-const SUPABASE_URL = 'https://stjvnjmqezdcxsdodnfc.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0anZuam1xZXpkY3hzZG9kbmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNTE5NTUsImV4cCI6MjA3OTkyNzk1NX0.nh111C74tbdSreSdn7sRQlI8PPNnOCpod-Y1nD3210o';
-const supabaseLib = window.supabase;
-window._supabase = (supabaseLib && supabaseLib.createClient)
-    ? supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY)
-    : null;
+/// CONFIGURACION supabaseClient ///
+const supabaseClient_URL = 'https://stjvnjmqezdcxsdodnfc.supabaseClient.co';
+const supabaseClient_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0anZuam1xZXpkY3hzZG9kbmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNTE5NTUsImV4cCI6MjA3OTkyNzk1NX0.nh111C74tbdSreSdn7sRQlI8PPNnOCpod-Y1nD3210o';
+const { createClient } = window.supabaseClient || {};
+
+if (createClient) {
+    window._supabaseClient = createClient(supabaseClient_URL, supabaseClient_KEY);
+    console.log("✅ supabaseClient inicializado correctamente");
+} else {
+    console.error("❌ Error: La librería de supabaseClient no se cargó");
+    window._supabaseClient = null;
+}
 
 /// VARIABLES ///
 let allProducts = [];
@@ -32,10 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
         loadDynamicHero();
     }
 
-    if (window._supabase) { // ✅ CORREGIDO
+    if (window._supabaseClient) { // ✅ CORREGIDO
         console.log("🛸 Sistema conectado a la Base de Datos");
     } else {
-        console.error("🔴 Error crítico: Librería Supabase no cargada.");
+        console.error("🔴 Error crítico: Librería supabaseClient no cargada.");
     }
 });
 
@@ -316,7 +321,7 @@ function injectGlobalModals() {
 let dotLottieInstance = null;
 
 window.openLoginModal = async function () {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabaseClientClient.auth.getUser();
     if (user) {
         console.log("✅ Usuario detectado. Actualizando interfaz...");
         updateHeaderUser(user);
@@ -379,7 +384,7 @@ window.loginWithGoogle = async function () {
     console.log("📡 Iniciando protocolo OAuth con Google...");
     const cleanRedirectURL = window.location.origin + window.location.pathname;
     console.log("🎯 Redireccionando a:", cleanRedirectURL);
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabaseClientClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
             redirectTo: cleanRedirectURL,
@@ -400,7 +405,7 @@ window.loginWithGoogle = async function () {
 window.openLoginModal = async function () {
     console.log("🔓 Abriendo modal de login...");
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabaseClientClient.auth.getUser();
 
     if (user) {
         console.log("✅ Usuario ya conectado:", user.email);
@@ -443,7 +448,7 @@ window.performLogout = async function () {
     console.log("🔌 Iniciando cierre de sesión...");
 
     try {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabaseClientClient.auth.signOut();
 
         if (error) {
             console.error("Error al cerrar sesión:", error);
@@ -479,7 +484,7 @@ async function updateHeaderUser(user) {
 
     try {
         if (!avatarUrl) {
-            const { data: profile, error } = await supabase
+            const { data: profile, error } = await supabaseClientClient
                 .from('users')
                 .select('avatar_url, full_name, ranks ( name )')
                 .eq('id', user.id)
@@ -500,7 +505,7 @@ async function updateHeaderUser(user) {
 
     let userRank = "Explorador";
     try {
-        const { data } = await supabase
+        const { data } = await supabaseClientClient
             .from('users')
             .select('ranks ( name )')
             .eq('id', user.id)
@@ -615,7 +620,7 @@ async function updateHeaderUser(user) {
 function initAuthListener() {
     console.log("🎧 Inicializando listener de autenticación...");
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabaseClient.auth.getUser().then(({ data: { user } }) => {
         if (user) {
             console.log("👤 Usuario detectado al cargar:", user.email);
             updateHeaderUser(user);
@@ -624,7 +629,7 @@ function initAuthListener() {
         }
     });
 
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
         console.log("🔔 Cambio de estado:", event);
 
         if (event === 'SIGNED_IN' && session?.user && !hasShownWelcome) {
@@ -645,7 +650,7 @@ function initAuthListener() {
             const menu = document.getElementById('zyloxUserMenu');
             if (menu) menu.remove();
         }
-        supabase.auth.onAuthStateChange((event, session) => {
+        supabaseClient.auth.onAuthStateChange((event, session) => {
             if (event === 'PASSWORD_RECOVERY') {
                 console.log("🚨 Modo Recuperación detectado. Redirigiendo...");
                 window.location.href = '/reset-password.html';
@@ -699,7 +704,7 @@ window.handleLogin = async function (e) {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabaseClientClient.auth.signInWithPassword({
         email: email,
         password: password
     });
@@ -733,7 +738,7 @@ window.handleRegister = async function (e) {
     const randomSuffix = Math.floor(Math.random() * 1000);
     const cleanUsername = inputName.trim().toLowerCase().replace(/[^a-z0-9]/g, '_') + "_" + randomSuffix;
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabaseClientClient.auth.signUp({
         email: email,
         password: password,
         options: {
@@ -766,7 +771,7 @@ window.handleRecovery = async function (e) {
     showMessage('📡 Buscando usuario...', 'neutral');
     const email = document.getElementById('rec-email').value;
     const redirectUrl = 'https://geekworldland.com/reset-password.html';
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { data, error } = await supabaseClientClient.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl,
     });
 
@@ -800,7 +805,7 @@ function openLogoutModal(userName) {
         confirmBtn.onclick = async () => {
             confirmBtn.innerText = "Desconectando...";
             try {
-                await supabase.auth.signOut();
+                await supabaseClientClient.auth.signOut();
                 window.location.reload();
             } catch (err) {
                 console.error("Error logout:", err);
@@ -944,9 +949,9 @@ function initGlobalEvents() {
 /* HERO SECTION */
 async function loadDynamicHero() {
     const container = document.getElementById('hero-dynamic-container');
-    if (!container || !supabase) return;
+    if (!container || !supabaseClient) return;
 
-    const { data: trendingProducts, error } = await supabase
+    const { data: trendingProducts, error } = await supabaseClientClient
         .from('products')
         .select('name, legend, description, card_middle_url')
         .eq('is_trending', true)

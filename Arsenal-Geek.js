@@ -1,4 +1,4 @@
-const supabase = window._supabase; // 🌉 PUENTE VITAL
+const supabaseClient = window._supabase; //
 /// VARIABLES ///
 let localProducts = [];
 let localCategories = [];
@@ -103,7 +103,7 @@ window.applySearchFromOverlay = function (query) {
 
 /// SLIDER ///
 async function setupPriceSlider() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClientClient
         .from('products')
         .select('compare_at_price')
         .order('compare_at_price', { ascending: false })
@@ -158,12 +158,12 @@ function updateSliderLabel(val) {
     }
 }
 
-/// SUPABASE - CARGA DE CATEGORÍAS ///
+/// supabaseClient - CARGA DE CATEGORÍAS ///
 async function loadCategories() {
     const container = document.getElementById('categoriesContainer');
-    if (!supabase) return;
+    if (!supabaseClient) return;
 
-    const { data: allCats, error } = await window._supabase.from('categories').select('*').order('display_order');
+    const { data: allCats, error } = await window._supabaseClient.from('categories').select('*').order('display_order');
     if (error) return;
 
     localCategories = allCats;
@@ -247,7 +247,7 @@ window.filterByCategory = (identifier, e) => {
 async function loadProducts() {
     const grid = document.getElementById('productsGrid');
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClientClient
         .from('products')
         .select(`*, categories(name), product_colors(*)`)
         .eq('is_published', true)
@@ -255,7 +255,7 @@ async function loadProducts() {
 
     if (error) {
         grid.innerHTML = `<div class="error-msg">❌ Error crítico en sensores: ${error.message}</div>`;
-        console.error("Supabase Error:", error);
+        console.error("supabaseClient Error:", error);
         return;
     }
 
@@ -411,7 +411,7 @@ window.openProductView = async function (id) {
     document.getElementById('productModal').classList.add('active');
     document.getElementById('pmTitle').innerText = "RECUPERANDO DATOS...";
 
-    const { data, error } = await supabase.rpc('get_product_full_detail', { p_id: id });
+    const { data, error } = await supabaseClientClient.rpc('get_product_full_detail', { p_id: id });
 
     if (error || !data) {
         console.error("Fallo crítico en DB:", error);
