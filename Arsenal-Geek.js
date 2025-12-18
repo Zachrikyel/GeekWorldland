@@ -162,7 +162,7 @@ async function loadCategories() {
     const container = document.getElementById('categoriesContainer');
     if (!supabase) return;
 
-    const { data: allCats, error } = await supabase.from('categories').select('*').order('display_order');
+    const { data: allCats, error } = await window._supabase.from('categories').select('*').order('display_order');
     if (error) return;
 
     localCategories = allCats;

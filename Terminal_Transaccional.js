@@ -206,8 +206,8 @@ async function checkUserAndPrefill() {
         const saveCheck = document.getElementById('saveInfoCheck');
         if (saveCheck) saveCheck.checked = true;
 
-        const { data: profile } = await supabase.from('users').select('*').eq('id', user.id).single();
-        const { data: address } = await supabase.from('user_addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false }).limit(1).single();
+        const { data: profile } = await window._supabase.from('users').select('*').eq('id', user.id).single();
+        const { data: address } = await window._supabase.from('user_addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false }).limit(1).single();
 
         if (profile) {
             if (document.getElementById('fullName')) document.getElementById('fullName').value = profile.full_name || '';
@@ -280,7 +280,7 @@ window.processPayment = async function () {
 
         // 3. GUARDAR DATOS Y PERMISOS
         if (document.getElementById('saveInfoCheck').checked) {
-            await supabase.from('users').update({
+            await window._supabase.from('users').update({
                 full_name: document.getElementById('fullName').value,
                 phone: document.getElementById('phone1').value,
                 marketing_consent: document.getElementById('promoConsentCheck').checked
