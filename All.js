@@ -3,13 +3,11 @@ const SUPABASE_URL = 'https://stjvnjmqezdcxsdodnfc.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0anZuam1xZXpkY3hzZG9kbmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNTE5NTUsImV4cCI6MjA3OTkyNzk1NX0.nh111C74tbdSreSdn7sRQlI8PPNnOCpod-Y1nD3210o';
 
 // ✅ ESPERAR A QUE LA LIBRERÍA CARGUE
-let client = null;
-
 function initSupabase() {
     try {
         if (window.supabase && typeof window.supabase.createClient === 'function') {
-            client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            window.supabaseClient = client; // Guardamos en global
+            // ✅ CREAR UNA ÚNICA INSTANCIA GLOBAL
+            window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             console.log("✅ Supabase inicializado correctamente");
             return true;
         } else {
@@ -24,12 +22,89 @@ function initSupabase() {
 
 // Intentar inicializar inmediatamente
 if (!initSupabase()) {
-    // Si falla, reintentar cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initSupabase);
     } else {
         setTimeout(initSupabase, 100);
     }
+}
+
+/// ========== UTILIDAD DE PRECIOS CENTRALIZADA (CRÍTICO) ========== ///
+
+/**
+ * Calcula el precio final de un producto según la lógica de negocio:
+ * 1. Precio primario: sale_price
+ * 2. Si no hay sale_price (0 o null), usar base_price
+ * 3. Si compare_at_price existe y es MENOR que el precio actual, usar compare_at_price
+ * 
+ * @param {Object} product - Producto con propiedades sale_price, base_price, compare_at_price
+ * @returns {number} - Precio final válido
+ */
+window.calculateFinalPrice = function (product) {
+    // 🛡️ VALIDACIÓN INICIAL
+    if (!product) {
+        console.warn("⚠️ Producto undefined en calculateFinalPrice");
+        return 0;
+    }
+
+    // A. Extraer valores limpios
+    const sale = parseFloat(product.sale_price) || 0;
+    const base = parseFloat(product.base_price) || 0;
+
+    // 🔍 DEBUG: Ver precios
+    console.log(`💰 ${product.name}: sale=${sale}, base=${base}`);
+
+    // B. PRECIO FINAL: sale_price si existe, sino base_price
+    // compare_at_price NO se usa como precio final (solo para mostrar tachado)
+    const finalPrice = sale > 0 ? sale : base;
+
+    if (finalPrice <= 0) {
+        console.warn(`⚠️ Producto sin precio válido: ${product.name || product.id}`);
+        return 0;
+    }
+
+    return finalPrice;
+}
+
+/**
+ * Calcula si un producto tiene precio original visible (para tachar)
+ * Hay precio original cuando compare_at_price es MAYOR que el precio actual
+ * @param {Object} product 
+ * @returns {boolean}
+ */
+window.hasRealDiscount = function (product) {
+    const sale = parseFloat(product.sale_price) || 0;
+    const base = parseFloat(product.base_price) || 0;
+    const compare = parseFloat(product.compare_at_price) || 0;
+
+    // Precio actual: sale_price si existe, sino base_price
+    const currentPrice = sale > 0 ? sale : base;
+
+    // Hay precio original si compare_at_price existe y es MAYOR que el precio actual
+    return (compare > 0 && compare > currentPrice);
+}
+
+/**
+ * Obtiene el precio original (compare_at_price) para mostrar tachado
+ * @param {Object} product 
+ * @returns {number} - Precio original (compare_at_price)
+ */
+window.getOriginalPrice = function (product) {
+    return parseFloat(product.compare_at_price) || 0;
+}
+
+/**
+ * Formatea un precio para mostrar en COP
+ * @param {number} price 
+ * @returns {string}
+ */
+window.formatPrice = function (price) {
+    if (!price || price <= 0) return 'Consultar';
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0
+    }).format(price);
 }
 
 /// VARIABLES ///
@@ -341,40 +416,7 @@ function injectGlobalModals() {
 
 let dotLottieInstance = null;
 
-window.openLoginModal = async function () {
-    const { data: { user } } = await window.supabaseClient.auth.getUser();
-    if (user) {
-        console.log("✅ Usuario detectado. Actualizando interfaz...");
-        updateHeaderUser(user);
-        return;
-    }
-
-    const modal = document.getElementById('loginModal');
-    if (modal) {
-        modal.classList.add('active');
-        document.getElementById('phase-captcha').style.display = 'flex';
-        document.getElementById('phase-form').style.display = 'none';
-
-        const switchEl = document.getElementById('theme-switch');
-        if (switchEl) switchEl.checked = false;
-
-        if (!dotLottieInstance) {
-            try {
-                const { DotLottie } = await import('https://esm.sh/@lottiefiles/dotlottie-web@0.37.0');
-                const canvas = document.querySelector('#display-canvas');
-                if (canvas) {
-                    dotLottieInstance = new DotLottie({
-                        autoplay: true, loop: true, canvas: canvas,
-                        src: 'https://lottie.host/7da7b6c9-401f-436d-968b-c50ba49409b3/V6DoSiPH8g.lottie',
-                        themeId: 'Alien',
-                    });
-                }
-            } catch (e) { console.error("Error Lottie:", e); }
-        } else {
-            dotLottieInstance.setTheme('Alien');
-        }
-    }
-}
+// openLoginModal definida más abajo (versión mejorada)
 
 window.toggleAlienTheme = async function (checkbox) {
     if (!dotLottieInstance) return;
@@ -487,6 +529,53 @@ window.performLogout = async function () {
         showNotification("Ocurrió un error. Recargando página...");
         window.location.reload();
     }
+}
+
+/**
+ * Actualiza el perfil del usuario en la tabla users
+ * @param {string} newUsername - Nuevo nombre de usuario
+ * @param {string} newEmail - Nuevo email (opcional)
+ * @returns {Promise<boolean>} - true si fue exitoso
+ */
+window.updateProfile = async function (newUsername, newEmail = null) {
+    console.log("📝 Actualizando perfil de usuario...");
+
+    // Obtener el usuario actual
+    const { data: { user }, error: userError } = await window.supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+        console.error("❌ No hay usuario autenticado:", userError);
+        showNotification("⛔ Debes iniciar sesión para actualizar tu perfil.");
+        return false;
+    }
+
+    // Preparar los datos a actualizar
+    const updateData = {};
+    if (newUsername) updateData.username = newUsername;
+    if (newEmail) updateData.email = newEmail;
+
+    if (Object.keys(updateData).length === 0) {
+        showNotification("⚠️ No hay datos para actualizar.");
+        return false;
+    }
+
+    // Intentar actualizar en Supabase
+    const { data, error } = await window.supabaseClient
+        .from('users')
+        .update(updateData)
+        .eq('id', user.id);
+
+    // 🚨 Manejar errores (incluyendo los de triggers/políticas de seguridad)
+    if (error) {
+        console.error("❌ Error al actualizar perfil:", error);
+        showNotification("⛔ " + error.message);
+        return false;
+    }
+
+    // Éxito
+    console.log("✅ Perfil actualizado:", data);
+    showNotification("✅ Perfil actualizado exitosamente, Operativo.");
+    return true;
 }
 
 async function updateHeaderUser(user) {
@@ -653,6 +742,12 @@ function initAuthListener() {
     window.supabaseClient.auth.onAuthStateChange((event, session) => {
         console.log("🔔 Cambio de estado:", event);
 
+        if (event === 'PASSWORD_RECOVERY') {
+            console.log("🚨 Modo Recuperación detectado. Redirigiendo...");
+            window.location.href = '/reset-password.html';
+            return;
+        }
+
         if (event === 'SIGNED_IN' && session?.user && !hasShownWelcome) {
             hasShownWelcome = true;
             showNotification(`¡Bienvenido, ${session.user.email.split('@')[0]}!`);
@@ -670,13 +765,6 @@ function initAuthListener() {
 
             const menu = document.getElementById('zyloxUserMenu');
             if (menu) menu.remove();
-        }
-    });
-
-    window.supabaseClient.auth.onAuthStateChange((event, session) => {
-        if (event === 'PASSWORD_RECOVERY') {
-            console.log("🚨 Modo Recuperación detectado. Redirigiendo...");
-            window.location.href = '/reset-password.html';
         }
     });
 }
@@ -858,21 +946,7 @@ window.redirectToPortfolio = function () {
     window.location.href = 'portafolio.html';
 }
 
-window.executeSearch = function () {
-    const input = document.getElementById('searchInputOverlay');
-    const query = input?.value.trim();
-
-    if (query) {
-        console.log('🔎 Ejecutando búsqueda:', query);
-
-        const overlay = document.getElementById('searchOverlay');
-        if (overlay) overlay.classList.remove('active');
-
-        window.location.href = `Arsenal-Geek.html?q=${encodeURIComponent(query)}`;
-    } else {
-        showNotification('⚠️ Por favor ingresa un término de búsqueda');
-    }
-}
+// executeSearch definida más abajo (versión mejorada)
 
 window.executeSearch = function () {
     const input = document.getElementById('searchInputOverlay');
@@ -1051,7 +1125,7 @@ function initHeroCarousel() {
     newPrev.onclick = function () { showSlider('prev'); resetTimer(); }
 }
 
-
+// NOTA: Función duplicada renderArsenalGrid eliminada - la función correcta está abajo
 function renderArsenalGrid(products, container) {
     if (!products || products.length === 0) {
         container.innerHTML = `
@@ -1067,54 +1141,8 @@ function renderArsenalGrid(products, container) {
     }
 
     container.innerHTML = products.map(product => {
-        // 🛡️ PROTECCIÓN: Si es null/undefined, usa 0
-        const finalPrice = product.sale_price || product.compare_at_price || 0;
-
-        // 🛡️ PROTECCIÓN: Solo formatea si el precio es válido
-        const price = finalPrice > 0
-            ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(finalPrice)
-            : 'Consultar';
-
-        const finalImage = product.card_middle_url || product.card_front_url || 'images/Logo Header.png';
-
-        return `
-        <div class="product-card neon-card-style">
-            <div class="product-image">
-                <img src="${finalImage}" alt="${product.name}" loading="lazy">
-                ${product.is_trending ? '<span class="badge-trending">TENDENCIA</span>' : ''}
-            </div>
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <p class="product-desc">${product.description ? product.description.substring(0, 60) + '...' : 'Sin descripción'}</p>
-                <div class="product-meta">
-                    <span class="price">${price}</span>
-                    <button class="add-btn" onclick="addToCartFromCatalog('${product.id}', '${product.name}', ${finalPrice}, '${finalImage}')">
-                        <i class='bx bx-cart-add'></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        `;
-    }).join('');
-}
-
-function renderArsenalGrid(products, container) {
-    if (!products || products.length === 0) {
-        container.innerHTML = `
-            <div style="grid-column:1/-1; text-align:center; padding: 50px;">
-                <i class='bx bx-ghost' style="font-size:4rem; color:var(--text-muted);"></i>
-                <h3 style="color:white; margin-top:20px;">No se encontraron especímenes.</h3>
-                <p style="color:#94a3b8;">Intenta con otro término de búsqueda.</p>
-                <button onclick="window.location.href='Arsenal-Geek.html'" style="margin-top:20px; padding:10px 20px; background:var(--primary-purple); border:none; color:white; border-radius:5px; cursor:pointer;">
-                    Ver todo el Arsenal
-                </button>
-            </div>`;
-        return;
-    }
-
-    container.innerHTML = products.map(product => {
-        // 🛡️ PROTECCIÓN: Si es null/undefined, usa 0
-        const finalPrice = product.sale_price || product.compare_at_price || 0;
+        // ✅ CORREGIDO: Usar función centralizada de precios
+        const finalPrice = window.calculateFinalPrice(product);
 
         // 🛡️ PROTECCIÓN: Solo formatea si el precio es válido
         const price = finalPrice > 0

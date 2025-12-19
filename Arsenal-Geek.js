@@ -102,19 +102,30 @@ window.applySearchFromOverlay = function (query) {
 
 /// SLIDER ///
 async function setupPriceSlider() {
+    // A. Consultar el producto más caro por compare_at_price
     const { data, error } = await window.supabaseClient
         .from('products')
-        .select('compare_at_price')
-        .not('compare_at_price', 'is', null)  // 🛡️ Filtrar nulls
-        .gt('compare_at_price', 0)            // 🛡️ Filtrar ceros
-        .order('compare_at_price', { ascending: false })
-        .limit(1);
+        .select('compare_at_price, sale_price, base_price')
+        .eq('is_published', true)
+        // Removemos filtro de compare_at_price para permitir productos con solo base_price
+        .order('compare_at_price', { ascending: false });
 
     const slider = document.getElementById('priceSlicer');
     let maxPrice = 1000000; // Valor por defecto
 
     if (data && data.length > 0) {
-        maxPrice = data[0].compare_at_price;
+        // ✅ BUSCAR EL PRECIO REAL MÁS ALTO (considerando ofertas)
+        let realMaxPrice = 0;
+
+        data.forEach(product => {
+            const finalPrice = window.calculateFinalPrice(product);
+            if (finalPrice > realMaxPrice) {
+                realMaxPrice = finalPrice;
+            }
+        });
+
+        maxPrice = realMaxPrice > 0 ? realMaxPrice : data[0].compare_at_price;
+        console.log(`🎚️ Precio máximo del catálogo: $${maxPrice.toLocaleString('es-CO')}`);
     }
 
     if (slider) {
@@ -164,7 +175,7 @@ async function loadCategories() {
     const container = document.getElementById('categoriesContainer');
     if (!supabaseClient) return;
 
-    const { data: allCats, error } = await supabaseClient.from('categories').select('*').order('display_order');
+    const { data: allCats, error } = await window.supabaseClient.from('categories').select('*').order('display_order');
     if (error) return;
 
     localCategories = allCats;
@@ -252,8 +263,7 @@ async function loadProducts() {
         .from('products')
         .select(`*, categories(name), product_colors(*)`)
         .eq('is_published', true)
-        .not('compare_at_price', 'is', null)  // 🛡️ Excluir productos sin precio
-        .gt('compare_at_price', 0)            // 🛡️ Excluir productos con precio = 0
+        // Removemos filtros estrictos - el filtrado de precio se hace en applyFilters
         .order('display_order', { ascending: true });
 
     if (error) {
@@ -262,6 +272,7 @@ async function loadProducts() {
         return;
     }
 
+    console.log("📦 Productos cargados desde Supabase:", data?.length || 0, data);
     localProducts = data;
     applyFilters();
 }
@@ -285,19 +296,16 @@ function renderProducts(productsList) {
     }
 
     grid.innerHTML = productsList.map(p => {
-        const backUrl = p.card_back_url ? p.card_back_url : null;
+        const backUrl = p.card_back_url || null;
         const middleImg = p.card_middle_url || p.image_url || 'images/placeholder.png';
         const frontImgLayer = p.card_front_url
             ? `<div class="full-layer layer-front"><img src="${p.card_front_url}" alt="${p.name}-front"></div>`
             : '';
 
-        // 🛡️ LÓGICA DE PRECIOS UNIFICADA
-        const rawSale = p.sale_price || 0;
-        const rawCompare = p.compare_at_price || 0;
-
-        // Regla: Si sale_price existe y es válido, es el precio real. Si no, usa compare.
-        const finalPrice = (rawSale > 0) ? rawSale : rawCompare;
-        const showOffer = (rawSale > 0 && rawCompare > rawSale);
+        // ✅ USAR FUNCIÓN CENTRALIZADA
+        const finalPrice = window.calculateFinalPrice(p);
+        const hasDiscount = window.hasRealDiscount(p);
+        const originalPrice = window.getOriginalPrice(p);
 
         return `
         <div class="monster-card" onclick="openProductView(${p.id})">
@@ -312,7 +320,7 @@ function renderProducts(productsList) {
                 <div class="info-footer-compact">
                     <div class="price-tag-compact">
                         <span class="currency">$</span>${finalPrice.toLocaleString('es-CO')}
-                        ${showOffer ? `<span style="font-size:0.7em; text-decoration:line-through; color:#aaa; margin-left:4px;">$${rawCompare.toLocaleString('es-CO')}</span>` : ''}
+                        ${hasDiscount ? `<span style="font-size:0.7em; text-decoration:line-through; color:#aaa; margin-left:4px;">$${originalPrice.toLocaleString('es-CO')}</span>` : ''}
                     </div>
                     
                     <button class="add-btn-glass" onclick="event.stopPropagation(); addToCartFromGrid(${p.id})">
@@ -375,23 +383,25 @@ function applyFilters() {
         return;
     }
 
-    // 🔍 FILTRADO CON BÚSQUEDA
     const filtered = localProducts.filter(p => {
-        // A. Precio
-        const passPrice = p.compare_at_price <= priceLimit;
+        // ✅ A. PRECIO (Usar precio final calculado)
+        const finalPrice = window.calculateFinalPrice(p);
+        const passPrice = finalPrice <= priceLimit && finalPrice > 0;
 
-        // B. 🔍 BÚSQUEDA (PRIORIDAD MÁXIMA)
+        // 🔍 DEBUG: Ver qué está pasando con cada producto
+        console.log(`🔍 Producto: ${p.name} | Precio Final: ${finalPrice} | Límite: ${priceLimit} | Pasa? ${passPrice}`);
+
+        // B. BÚSQUEDA
         let passSearch = true;
         if (activeSearchQuery) {
             const query = activeSearchQuery.toLowerCase();
             const name = (p.name || '').toLowerCase();
             const desc = (p.description || '').toLowerCase();
             const legend = (p.legend || '').toLowerCase();
-
             passSearch = name.includes(query) || desc.includes(query) || legend.includes(query);
         }
 
-        // C. Categoría (solo si NO hay búsqueda activa)
+        // C. CATEGORÍA (solo si NO hay búsqueda activa)
         let passCat = true;
         if (activeCategory !== 'all' && !activeSearchQuery) {
             if (activeCategoryId !== null) {
@@ -423,7 +433,6 @@ window.openProductView = async function (id) {
     document.getElementById('productModal').classList.add('active');
     document.getElementById('pmTitle').innerText = "RECUPERANDO DATOS...";
 
-    // 🛡️ FIX 1: window.supabaseClient (estaba sin window.)
     const { data, error } = await window.supabaseClient.rpc('get_product_full_detail', { p_id: id });
 
     if (error || !data) {
@@ -431,39 +440,49 @@ window.openProductView = async function (id) {
         return;
     }
 
+    // 🔍 DEBUG: Ver qué datos retorna el RPC
+    console.log("🎯 Modal RPC Data:", data);
+    console.log(`🎯 Modal Precios: sale_price=${data.sale_price}, base_price=${data.base_price}, compare_at_price=${data.compare_at_price}`);
+
     modalProduct = data;
 
     document.getElementById('pmTitle').innerText = modalProduct.name;
     document.getElementById('pmLegend').innerText = modalProduct.legend || "";
     document.getElementById('pmDescription').innerText = modalProduct.description || "Datos clasificados.";
 
-    // 🛡️ FIX 2: Validar precio (Con Fallback a LocalStorage si el RPC falla)
-    let displayPrice = 0;
+    // ✅ USAR DATOS LOCALES PARA PRECIOS (RPC no retorna sale_price ni compare_at_price)
+    const localProductData = localProducts.find(p => p.id === id);
+    const priceSource = localProductData || modalProduct;
+    console.log(`🎯 Usando: ${localProductData ? 'localProducts' : 'RPC'}, sale=${priceSource.sale_price}`);
 
-    // A. Intentar leer del objeto RPC
-    const rpcSale = modalProduct.sale_price || 0;
-    const rpcCompare = modalProduct.compare_at_price || 0;
+    const displayPrice = window.calculateFinalPrice(priceSource);
+    const hasDiscount = window.hasRealDiscount(priceSource);
+    const originalPrice = window.getOriginalPrice(priceSource);
 
-    // B. Si ambos son 0, buscar en localProducts (Grid data) que es seguro
-    if (rpcSale === 0 && rpcCompare === 0) {
-        console.warn("⚠️ RPC retornó precios vacíos. Buscando respaldo local...");
-        const localBackup = localProducts.find(p => p.id === id);
-        if (localBackup) {
-            displayPrice = (localBackup.sale_price > 0) ? localBackup.sale_price : localBackup.compare_at_price;
-            // Inyectamos el precio recuperado al objeto modalProduct para que el carrito lo use
-            modalProduct.final_calculated_price = displayPrice;
+    // Copiar datos de precio a modalProduct para el carrito
+    modalProduct.final_calculated_price = displayPrice;
+    modalProduct.sale_price = priceSource.sale_price;
+    modalProduct.compare_at_price = priceSource.compare_at_price;
+
+    // Elemento para precio original tachado
+    const originalPriceEl = document.getElementById('pmOriginalPrice');
+
+    // Mostrar precio y precio tachado si hay descuento
+    if (displayPrice > 0) {
+        document.getElementById('pmPrice').innerText = displayPrice.toLocaleString('es-CO');
+
+        if (hasDiscount && originalPriceEl) {
+            originalPriceEl.innerText = '$' + originalPrice.toLocaleString('es-CO');
+            originalPriceEl.style.display = 'inline';
+        } else if (originalPriceEl) {
+            originalPriceEl.style.display = 'none';
         }
     } else {
-        // Lógica estándar
-        displayPrice = (rpcSale > 0) ? rpcSale : rpcCompare;
-        modalProduct.final_calculated_price = displayPrice;
+        document.getElementById('pmPrice').innerText = 'Consultar';
+        if (originalPriceEl) originalPriceEl.style.display = 'none';
     }
 
-    document.getElementById('pmPrice').innerText = displayPrice > 0
-        ? `$${displayPrice.toLocaleString('es-CO')}`
-        : 'Consultar';
-
-    // 🛡️ FIX 3: Validar stock (puede venir como null o undefined)
+    // Stock y demás lógica...
     const stockQty = modalProduct.stock_quantity || 0;
     renderStockStatus(stockQty);
 
@@ -593,21 +612,32 @@ window.addToCartFromModal = function () {
 
 window.addToCartFromGrid = function (id) {
     const productObj = localProducts.find(p => p.id === id);
-    if (productObj && window.addToCart) {
-        // Calcular precio correcto antes de enviar
-        const rawSale = productObj.sale_price || 0;
-        const rawCompare = productObj.compare_at_price || 0;
-        const finalPrice = (rawSale > 0) ? rawSale : rawCompare;
 
-        // Inyectar precio calculado
-        const productToSend = {
-            ...productObj,
-            base_price: finalPrice
-        };
+    if (!productObj) {
+        console.error("❌ Error: Artefacto no encontrado en memoria local.");
+        return;
+    }
 
-        console.log(`📦 Añadiendo desde Grid: ${productObj.name} | Precio: ${finalPrice}`);
+    // ✅ CALCULAR PRECIO CORRECTO
+    const finalPrice = window.calculateFinalPrice(productObj);
+
+    if (finalPrice === 0) {
+        if (typeof showNotification === 'function') {
+            showNotification("⚠️ Producto sin precio válido. Contacta soporte.");
+        }
+        return;
+    }
+
+    const productToSend = {
+        ...productObj,
+        base_price: finalPrice // Guardar el precio ya calculado
+    };
+
+    console.log(`📦 Añadiendo desde Grid: ${productObj.name} | Precio: ${finalPrice}`);
+
+    if (typeof addToCart === 'function') {
         addToCart(productToSend, 1);
     } else {
-        console.error("❌ Error: Artefacto no encontrado en memoria local.");
+        console.error("❌ Función addToCart no disponible");
     }
 };

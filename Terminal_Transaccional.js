@@ -1,5 +1,3 @@
-const supabaseClient = window.supabaseClient;
-
 const colombiaData = {
     "Amazonas": ["Leticia", "Puerto Nariño"],
     "Antioquia": ["Medellín", "Bello", "Itagüí", "Envigado", "Apartadó", "Rionegro", "Turbo", "Caucasia", "Sabaneta", "La Estrella"],
@@ -99,22 +97,30 @@ function renderCheckoutSummary() {
     currentProductsTotal = 0;
 
     if (cart.length === 0) {
-        container.innerHTML = '<p style="color:#aaa; text-align:center; padding: 20px;">Tu carga está vacía.<br><a href="Geek-Worldland.html" style="color:var(--primary-cyan)">Volver al radar</a></p>';
+        container.innerHTML = '<p style="color:#aaa; text-align:center; padding: 20px;">Tu carga está vacía.<br><a href="Arsenal-Geek.html" style="color:var(--primary-cyan)">Volver al radar</a></p>';
         updateTotalsDisplay(0, 0, 0);
         return;
     }
 
     container.innerHTML = cart.map((item, index) => {
-        // 🛡️ LÓGICA DE PRECIOS TRANSACCIONAL
-        // Prioridad: base_price (ya calculado en carrito) > sale_price > compare_at_price
-        const unitPrice = item.base_price || (item.sale_price > 0 ? item.sale_price : item.compare_at_price) || 0;
+        // ✅ USAR PRECIO YA CALCULADO DEL CARRITO
+        // El carrito debe tener base_price ya calculado correctamente
+        const unitPrice = item.base_price || 0;
+
+        // ⚠️ VALIDACIÓN: Si base_price es 0, recalcular
+        if (unitPrice === 0) {
+            console.warn(`⚠️ Item sin precio válido: ${item.name}. Recalculando...`);
+            // Intentar recalcular usando la función global
+            const recalculated = window.calculateFinalPrice(item);
+            if (recalculated > 0) {
+                item.base_price = recalculated;
+                unitPrice = recalculated;
+            }
+        }
 
         currentProductsTotal += unitPrice * item.quantity;
         const imgSrc = item.card_middle_url || item.image_url || 'images/Logo Header.png';
-
-        // --- NUEVO CÓDIGO: LÓGICA DE VISUALIZACIÓN DE VARIANTE ---
         const variantColor = item.selected_color || "Base";
-        // ---------------------------------------------------------
 
         return `<div class="order-summary-item">
         <img src="${imgSrc}" class="prod-img" onerror="this.src='images/Logo Header.png'">
@@ -181,7 +187,7 @@ window.applyDiscount = async function () {
     btn.textContent = "...";
     btn.disabled = true;
 
-    const { data, error } = await supabaseClientClient
+    const { data, error } = await window.supabaseClient
         .from('coupons')
         .select('*')
         .eq('code', code)
@@ -205,8 +211,8 @@ window.applyDiscount = async function () {
 
 // ========== PRE-LLENAR DATOS ==========
 async function checkUserAndPrefill() {
-    if (!supabaseClient) return;
-    const { data: { user } } = await supabaseClientClient.auth.getUser();
+    if (!window.supabaseClient) return;
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
 
     if (user) {
         const saveCheck = document.getElementById('saveInfoCheck');
@@ -281,7 +287,7 @@ window.processPayment = async function () {
 
     try {
         // 2. OBTENER USUARIO
-        const { data: { user } } = await supabaseClientClient.auth.getUser();
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) throw new Error("Debes iniciar sesión.");
 
         // 3. GUARDAR DATOS Y PERMISOS
@@ -299,7 +305,7 @@ window.processPayment = async function () {
         const currency = 'COP';
 
         // 5. CREAR ORDEN EN BASE DE DATOS
-        const { data: orderData, error: orderError } = await supabaseClientClient
+        const { data: orderData, error: orderError } = await window.supabaseClient
             .from('orders')
             .insert([{
                 user_id: user.id,
@@ -340,7 +346,7 @@ window.processPayment = async function () {
                 custom_notes: item.custom_notes || null
             }));
 
-            const { error: itemsError } = await supabaseClientClient
+            const { error: itemsError } = await window.supabaseClient
                 .from('order_items')
                 .insert(orderItems);
 
@@ -453,7 +459,7 @@ async function checkTransactionStatus() {
 
         if (status === 'APPROVED') {
             // 2. ACTUALIZAR ORDEN EN supabaseClient
-            const { data: updateData, error: updateError } = await supabaseClientClient
+            const { data: updateData, error: updateError } = await window.supabaseClient
                 .from('orders')
                 .update({
                     status: 'paid',
