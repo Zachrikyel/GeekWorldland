@@ -8,6 +8,8 @@ let priceLimit = 0;
 let currentProductId = null;
 let modalProduct = null;
 let selectedColorName = "Base";
+let selectedVariant = null; // 🎨 Objeto variante seleccionada (para Delta Pricing)
+let modalPriceSource = null; // 📦 Referencia al producto con datos de precio
 let currentCarouselMedia = [];
 let carouselIndex = 0;
 
@@ -430,6 +432,7 @@ function applyFilters() {
 /// MODAL DE DETALLE ///
 window.openProductView = async function (id) {
     selectedColorName = "Base";
+    selectedVariant = null; // 🎨 Reset variante al abrir modal
     document.getElementById('productModal').classList.add('active');
     document.getElementById('pmTitle').innerText = "RECUPERANDO DATOS...";
 
@@ -452,35 +455,21 @@ window.openProductView = async function (id) {
 
     // ✅ USAR DATOS LOCALES PARA PRECIOS (RPC no retorna sale_price ni compare_at_price)
     const localProductData = localProducts.find(p => p.id === id);
-    const priceSource = localProductData || modalProduct;
-    console.log(`🎯 Usando: ${localProductData ? 'localProducts' : 'RPC'}, sale=${priceSource.sale_price}`);
+    modalPriceSource = localProductData || modalProduct; // 📦 Guardar referencia global
+    console.log(`🎯 Usando: ${localProductData ? 'localProducts' : 'RPC'}, sale=${modalPriceSource.sale_price}`);
 
-    const displayPrice = window.calculateFinalPrice(priceSource);
-    const hasDiscount = window.hasRealDiscount(priceSource);
-    const originalPrice = window.getOriginalPrice(priceSource);
+    // Copiar datos de precio base a modalProduct para el carrito
+    modalProduct.sale_price = modalPriceSource.sale_price;
+    modalProduct.compare_at_price = modalPriceSource.compare_at_price;
+    modalProduct.base_price = modalPriceSource.base_price;
 
-    // Copiar datos de precio a modalProduct para el carrito
-    modalProduct.final_calculated_price = displayPrice;
-    modalProduct.sale_price = priceSource.sale_price;
-    modalProduct.compare_at_price = priceSource.compare_at_price;
-
-    // Elemento para precio original tachado
-    const originalPriceEl = document.getElementById('pmOriginalPrice');
-
-    // Mostrar precio y precio tachado si hay descuento
-    if (displayPrice > 0) {
-        document.getElementById('pmPrice').innerText = displayPrice.toLocaleString('es-CO');
-
-        if (hasDiscount && originalPriceEl) {
-            originalPriceEl.innerText = '$' + originalPrice.toLocaleString('es-CO');
-            originalPriceEl.style.display = 'inline';
-        } else if (originalPriceEl) {
-            originalPriceEl.style.display = 'none';
-        }
-    } else {
-        document.getElementById('pmPrice').innerText = 'Consultar';
-        if (originalPriceEl) originalPriceEl.style.display = 'none';
+    // 🎨 Los colores vienen de localProducts (incluye product_colors con price_adjustment)
+    if (localProductData && localProductData.product_colors) {
+        modalProduct.colors = localProductData.product_colors;
     }
+
+    // 📊 Mostrar precio inicial (sin variante seleccionada aún)
+    updateModalPrice();
 
     // Stock y demás lógica...
     const stockQty = modalProduct.stock_quantity || 0;
@@ -520,9 +509,21 @@ function renderColorSelector() {
     const container = document.getElementById('pmColorOptions');
     container.innerHTML = '';
 
-    const colors = (modalProduct.colors && modalProduct.colors.length > 0)
-        ? modalProduct.colors
-        : [{ id: null, name: 'Base', hex: '#fdddca' }];
+    // 🎨 NORMALIZAR ESTRUCTURA: product_colors puede tener campos diferentes a RPC colors
+    // RPC colors: { id, name, hex }
+    // product_colors: { id, color_name, hex_code, price_adjustment }
+    let colors = [];
+
+    if (modalProduct.colors && modalProduct.colors.length > 0) {
+        colors = modalProduct.colors.map(c => ({
+            id: c.id,
+            name: c.name || c.color_name || 'Sin nombre',      // Soporta ambos formatos
+            hex: c.hex || c.hex_code || '#fdddca',              // Soporta ambos formatos
+            price_adjustment: c.price_adjustment || 0           // Para Delta Pricing
+        }));
+    } else {
+        colors = [{ id: null, name: 'Base', hex: '#fdddca', price_adjustment: 0 }];
+    }
 
     colors.forEach((color, idx) => {
         const dot = document.createElement('div');
@@ -539,8 +540,15 @@ function selectColor(colorObj, dotElement) {
     document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
     dotElement.classList.add('active');
     selectedColorName = colorObj.name;
+
+    // 🎨 DELTA PRICING: Guardar variante seleccionada
+    selectedVariant = colorObj.id ? colorObj : null; // Si tiene id, es variante real
+
     const labelColor = document.getElementById('pmColorName');
     if (labelColor) labelColor.innerText = colorObj.name;
+
+    // 📊 ACTUALIZAR PRECIO CON VARIANTE
+    updateModalPrice();
 
     let media = [];
     if (modalProduct.media) {
@@ -556,6 +564,46 @@ function selectColor(colorObj, dotElement) {
     currentCarouselMedia = media;
     carouselIndex = 0;
     updateCarouselDisplay();
+}
+
+/**
+ * 📊 NUEVA FUNCIÓN: Actualiza el precio del modal según la variante seleccionada
+ * Usa Delta Pricing: precio_base + price_adjustment de la variante
+ */
+function updateModalPrice() {
+    if (!modalPriceSource) return;
+
+    // Calcular precios con variante (si existe)
+    const displayPrice = window.calculateFinalPrice(modalPriceSource, selectedVariant);
+    const hasDiscount = window.hasRealDiscount(modalPriceSource, selectedVariant);
+    const originalPrice = window.getOriginalPrice(modalPriceSource, selectedVariant);
+
+    // Guardar precio calculado para el carrito
+    modalProduct.final_calculated_price = displayPrice;
+
+    // Elementos del DOM
+    const priceEl = document.getElementById('pmPrice');
+    const originalPriceEl = document.getElementById('pmOriginalPrice');
+
+    // Mostrar precio
+    if (displayPrice > 0) {
+        priceEl.innerText = displayPrice.toLocaleString('es-CO');
+
+        if (hasDiscount && originalPriceEl) {
+            originalPriceEl.innerText = '$' + originalPrice.toLocaleString('es-CO');
+            originalPriceEl.style.display = 'inline';
+        } else if (originalPriceEl) {
+            originalPriceEl.style.display = 'none';
+        }
+    } else {
+        priceEl.innerText = 'Consultar';
+        if (originalPriceEl) originalPriceEl.style.display = 'none';
+    }
+
+    // 🔍 DEBUG
+    if (selectedVariant && selectedVariant.price_adjustment) {
+        console.log(`⚡ Precio actualizado con variante "${selectedVariant.name}": $${displayPrice.toLocaleString('es-CO')} (ajuste: ${selectedVariant.price_adjustment > 0 ? '+' : ''}${selectedVariant.price_adjustment})`);
+    }
 }
 
 function updateCarouselDisplay() {
@@ -596,12 +644,18 @@ window.addToCartFromModal = function () {
     const qty = parseInt(document.getElementById('pmQty').value);
 
     if (window.addToCart && modalProduct) {
+        // 🎨 DELTA PRICING: Calcular precio con variante actual
+        const finalPrice = window.calculateFinalPrice(modalPriceSource || modalProduct, selectedVariant);
+
         const productToSend = {
             ...modalProduct,
             selected_color: selectedColorName,
-            // Usamos el precio ya calculado y sanitizado en openProductView
-            base_price: modalProduct.final_calculated_price || 0
+            selected_variant: selectedVariant, // 🎨 Incluir objeto variante
+            price_adjustment: selectedVariant?.price_adjustment || 0, // 📊 Incluir ajuste
+            base_price: finalPrice // Precio final con ajuste de variante
         };
+
+        console.log(`🛒 Añadiendo al carrito: ${modalProduct.name} | Color: ${selectedColorName} | Precio: $${finalPrice.toLocaleString('es-CO')} | Ajuste: ${selectedVariant?.price_adjustment || 0}`);
 
         addToCart(productToSend, qty);
         closeProductModal();

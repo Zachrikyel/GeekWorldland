@@ -29,37 +29,43 @@ if (!initSupabase()) {
     }
 }
 
-/// ========== UTILIDAD DE PRECIOS CENTRALIZADA (CRÍTICO) ========== ///
+/// ========== UTILIDAD DE PRECIOS CENTRALIZADA (EVOLUCIONADA) ========== ///
 
 /**
- * Calcula el precio final de un producto según la lógica de negocio:
- * 1. Precio primario: sale_price
- * 2. Si no hay sale_price (0 o null), usar base_price
- * 3. Si compare_at_price existe y es MENOR que el precio actual, usar compare_at_price
+ * Calcula el precio final con soporte para variantes (Delta Pricing).
+ * Lógica: (Precio Base u Oferta) + (Ajuste de Variante)
  * 
- * @param {Object} product - Producto con propiedades sale_price, base_price, compare_at_price
- * @returns {number} - Precio final válido
+ * @param {Object} product - Tu objeto producto estándar
+ * @param {Object|null} selectedVariant - (Opcional) Objeto de la tabla product_colors
+ * @returns {number} - Precio final calculado
  */
-window.calculateFinalPrice = function (product) {
+window.calculateFinalPrice = function (product, selectedVariant = null) {
     // 🛡️ VALIDACIÓN INICIAL
     if (!product) {
         console.warn("⚠️ Producto undefined en calculateFinalPrice");
         return 0;
     }
 
-    // A. Extraer valores limpios
+    // A. Extraer valores base
     const sale = parseFloat(product.sale_price) || 0;
     const base = parseFloat(product.base_price) || 0;
 
-    // 🔍 DEBUG: Ver precios
-    console.log(`💰 ${product.name}: sale=${sale}, base=${base}`);
+    // B. Extraer el ajuste de la variante (La Magia)
+    // Si selectedVariant existe, tomamos price_adjustment, si no, es 0.
+    const adjustment = selectedVariant ? (parseFloat(selectedVariant.price_adjustment) || 0) : 0;
 
-    // B. PRECIO FINAL: sale_price si existe, sino base_price
-    // compare_at_price NO se usa como precio final (solo para mostrar tachado)
-    const finalPrice = sale > 0 ? sale : base;
+    // C. Determinar precio de partida (Prioridad a sale_price)
+    const startingPrice = sale > 0 ? sale : base;
+
+    // D. CÁLCULO FINAL
+    const finalPrice = startingPrice + adjustment;
+
+    // 🔍 DEBUG (Solo si hay ajuste para no ensuciar la consola)
+    if (adjustment !== 0) {
+        console.log(`⚡ Ajuste Variante: Base ${startingPrice} + Delta ${adjustment} = ${finalPrice}`);
+    }
 
     if (finalPrice <= 0) {
-        console.warn(`⚠️ Producto sin precio válido: ${product.name || product.id}`);
         return 0;
     }
 
@@ -67,30 +73,36 @@ window.calculateFinalPrice = function (product) {
 }
 
 /**
- * Calcula si un producto tiene precio original visible (para tachar)
- * Hay precio original cuando compare_at_price es MAYOR que el precio actual
+ * Calcula si mostramos el precio tachado.
+ * El precio tachado también debe subir si la variante es más cara.
  * @param {Object} product 
+ * @param {Object|null} selectedVariant - (Opcional) Variante seleccionada
  * @returns {boolean}
  */
-window.hasRealDiscount = function (product) {
-    const sale = parseFloat(product.sale_price) || 0;
-    const base = parseFloat(product.base_price) || 0;
-    const compare = parseFloat(product.compare_at_price) || 0;
+window.hasRealDiscount = function (product, selectedVariant = null) {
+    const finalPrice = window.calculateFinalPrice(product, selectedVariant);
+    const originalPrice = window.getOriginalPrice(product, selectedVariant);
 
-    // Precio actual: sale_price si existe, sino base_price
-    const currentPrice = sale > 0 ? sale : base;
-
-    // Hay precio original si compare_at_price existe y es MAYOR que el precio actual
-    return (compare > 0 && compare > currentPrice);
+    // Hay descuento real si el precio "tachado" es mayor al precio final pagable
+    return (originalPrice > 0 && originalPrice > finalPrice);
 }
 
 /**
- * Obtiene el precio original (compare_at_price) para mostrar tachado
+ * Obtiene el precio "Antes" (Compare At) ajustado por la variante.
+ * Si la variante sube el precio, sube tanto el precio final como el precio "tachado".
  * @param {Object} product 
- * @returns {number} - Precio original (compare_at_price)
+ * @param {Object|null} selectedVariant - (Opcional) Variante seleccionada
+ * @returns {number} - Precio original (compare_at_price + adjustment)
  */
-window.getOriginalPrice = function (product) {
-    return parseFloat(product.compare_at_price) || 0;
+window.getOriginalPrice = function (product, selectedVariant = null) {
+    const compare = parseFloat(product.compare_at_price) || 0;
+
+    // Si no hay precio de comparación base, no inventamos uno.
+    if (compare <= 0) return 0;
+
+    const adjustment = selectedVariant ? (parseFloat(selectedVariant.price_adjustment) || 0) : 0;
+
+    return compare + adjustment;
 }
 
 /**
@@ -99,11 +111,12 @@ window.getOriginalPrice = function (product) {
  * @returns {string}
  */
 window.formatPrice = function (price) {
-    if (!price || price <= 0) return 'Consultar';
+    if (price === undefined || price === null || isNaN(price)) return 'Consultar';
     return new Intl.NumberFormat('es-CO', {
         style: 'currency',
         currency: 'COP',
-        minimumFractionDigits: 0
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0 // En COP no solemos usar centavos
     }).format(price);
 }
 
