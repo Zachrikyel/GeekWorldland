@@ -957,3 +957,251 @@
         padding: 10px 15px !important;
     }
 }
+
+/* =========================================================
+   0. BASE GLOBAL FIXES (CRÍTICOS)
+   ========================================================= */
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* =========================================================
+   1. HEADER — FIX TABLETS / LANDSCAPE / LAPTOPS
+   ========================================================= */
+@media screen and (min-width: 768px) and (max-width: 1400px) and (orientation: landscape) {
+
+    header,
+    .header {
+        position: relative;
+        z-index: 10000;
+    }
+
+    /* Contenedor interno estable */
+    .header-inner {
+        display: grid !important;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        width: 100%;
+        padding: 0 20px;
+        min-height: 80px;
+    }
+
+    /* Logo perfectamente centrado */
+    .header-logo,
+    .header-logo img {
+        justify-self: center;
+        align-self: center;
+        max-width: 220px;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        position: relative !important;
+        z-index: 2;
+    }
+
+    /* Columnas laterales */
+    .header-left,
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        z-index: 3;
+    }
+
+    /* Mostrar iconos normales en landscape */
+    .header-actions .action-btn {
+        display: inline-flex !important;
+    }
+
+    /* Ocultar hamburguesa en landscape */
+    .menu-toggle {
+        display: none !important;
+    }
+}
+
+/* =========================================================
+   2. HERO SECTION — LANDSCAPE FIX
+   ========================================================= */
+@media screen and (min-width: 768px) and (max-width: 1400px) and (orientation: landscape) {
+
+    .carousel {
+        height: auto !important;
+        min-height: 55vh;
+        overflow: hidden;
+    }
+
+    .carousel .list .item img {
+        object-fit: cover;
+        object-position: center center !important;
+        opacity: 0.7;
+        transform: none !important;
+    }
+
+    .carousel .list .item .introduce {
+        position: absolute;
+        left: 5%;
+        bottom: 10%;
+        width: auto;
+        max-width: 48%;
+        padding: 20px;
+        text-align: left;
+        background: linear-gradient(to right,
+                rgba(0, 0, 0, 0.75),
+                rgba(0, 0, 0, 0));
+        border-radius: 10px;
+        transform: none !important;
+        z-index: 5;
+    }
+
+    .introduce .topic {
+        font-size: 2rem !important;
+        line-height: 1.1;
+    }
+
+    .introduce .des {
+        font-size: 0.95rem !important;
+        -webkit-line-clamp: 6;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+/* =========================================================
+   3. CONTACT MODAL (ZYLOX) — FIX TOTAL
+   ========================================================= */
+.contact-modal {
+    position: fixed !important;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10050 !important;
+    pointer-events: auto !important;
+    overflow-y: auto;
+}
+
+.contact-modal * {
+    pointer-events: auto !important;
+}
+
+.contact-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Contenedor carta */
+.letter-container {
+    transform: none !important;
+    width: calc(100% - 40px);
+    max-width: 760px !important;
+    margin: 30px auto;
+    position: relative;
+}
+
+/* Botón cerrar SIEMPRE clicable */
+.close-contact {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    z-index: 10060 !important;
+    width: 40px;
+    height: 40px;
+    pointer-events: auto !important;
+}
+
+/* =========================================================
+   4. PRODUCT MODAL — SCROLL + VARIANTES
+   ========================================================= */
+.product-modal-content {
+    position: fixed !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 30px);
+    max-width: 960px;
+    height: calc(100vh - 40px) !important;
+    background: rgba(15, 15, 35, 0.98);
+    z-index: 10020 !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+}
+
+/* Layout interno */
+.pm-dashboard-layout {
+    display: grid !important;
+    grid-template-rows: 1fr auto;
+    height: 100%;
+}
+
+/* Zonas scrollables */
+.pm-zone-config,
+.pm-zone-intel {
+    overflow-y: auto !important;
+    padding: 15px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Descripción nunca cortada */
+.desc-terminal {
+    max-height: 50vh !important;
+    overflow-y: auto !important;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* Variantes siempre clicables */
+.color-circles-row,
+.variant-selectors {
+    position: relative;
+    z-index: 10040;
+}
+
+/* Barra inferior */
+.pm-action-deck {
+    position: sticky !important;
+    bottom: 0;
+    background: rgba(15, 15, 35, 0.98);
+    border-top: 2px solid var(--primary-cyan);
+    padding: 12px;
+    z-index: 10030 !important;
+}
+
+/* =========================================================
+   5. FIX STACKING CONTEXTS (CRÍTICO)
+   ========================================================= */
+/* Evita que transform rompa position:fixed */
+header,
+footer,
+.carousel,
+.contact-modal,
+.product-modal-content {
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+}
+
+/* =========================================================
+   6. LANDSCAPE GENERAL — PREVENCIÓN DE ZOOM RARO
+   ========================================================= */
+@media screen and (orientation: landscape) {
+    body {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+}
