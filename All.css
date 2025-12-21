@@ -2293,11 +2293,28 @@ input:checked+.slider:before {
 .cart-item p {
     text-shadow: none;
     transform: translateZ(0);
+    font-size: 0.7rem;
+}
+
+.cart-item p {
+    font-size: 0.6rem;
 }
 
 .cart-item h4 {
     font-weight: 700;
     letter-spacing: 0.5px;
+    margin-bottom: 2px;
+    line-height: 1.1;
+}
+
+.cart-item p,
+.cart-item-qty {
+    margin-bottom: 2px;
+}
+
+.cart-item p {
+    font-size: 0.7rem;
+    margin-bottom: 2px;
 }
 
 /* Botón eliminar flotante */
