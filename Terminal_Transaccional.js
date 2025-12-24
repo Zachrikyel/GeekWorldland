@@ -304,7 +304,18 @@ window.processPayment = async function () {
         const reference = `ORD-${Date.now()}-${user.id.slice(0, 8)}`;
         const currency = 'COP';
 
-        // 5. CREAR ORDEN EN BASE DE DATOS
+        // 🧠 NUEVO: CÁLCULO DE GANANCIA (PROFIT)
+        const cart = JSON.parse(localStorage.getItem('geekCart')) || [];
+
+        // Sumamos la ganancia individual de cada producto
+        const totalProfit = cart.reduce((sum, item) => {
+            const itemProfit = parseFloat(item.profit_margin) || 0;
+            return sum + (itemProfit * item.quantity);
+        }, 0);
+
+        console.log("💰 Ganancia estimada web:", totalProfit);
+
+        // 5. CREAR ORDEN EN BASE DE DATOS (ACTUALIZADO)
         const { data: orderData, error: orderError } = await window.supabaseClient
             .from('orders')
             .insert([{
@@ -314,6 +325,11 @@ window.processPayment = async function () {
                 payment_method: 'Wompi',
                 wompi_reference: reference,
                 currency: 'COP',
+
+                // 👇 LAS NUEVAS COLUMNAS CLAVE
+                total_profit: totalProfit,  // Ganancia automática
+                order_source: 'web',        // Origen del pedido
+
                 shipping_address: {
                     address: document.getElementById('addressHome').value,
                     city: document.getElementById('citySelect').value,
@@ -331,7 +347,6 @@ window.processPayment = async function () {
         console.log("✅ Orden creada:", orderData.id);
 
         // 6. CREAR ORDER ITEMS (En tabla separada)
-        const cart = JSON.parse(localStorage.getItem('geekCart')) || [];
 
         if (cart.length > 0) {
             const orderItems = cart.map(item => ({
@@ -458,7 +473,7 @@ async function checkTransactionStatus() {
         console.log("📝 Referencia:", reference);
 
         if (status === 'APPROVED') {
-            // 2. ACTUALIZAR ORDEN EN supabaseClient
+            // 2. ACTUALIZAR ORDEN EN supabaseClient (A PAGADO)
             const { data: updateData, error: updateError } = await window.supabaseClient
                 .from('orders')
                 .update({
@@ -475,7 +490,29 @@ async function checkTransactionStatus() {
                 throw updateError;
             }
 
-            console.log("✅ Orden actualizada:", updateData);
+            console.log("✅ Orden pagada. Iniciando protocolo de inventario...");
+
+            // 🧠 NUEVO: DESCONTAR STOCK (CRÍTICO) 📉
+            // Paso A: Obtener qué productos tenía esa orden
+            const { data: orderItems, error: itemsError } = await window.supabaseClient
+                .from('order_items')
+                .select('product_id, quantity')
+                .eq('order_id', updateData.id);
+
+            if (!itemsError && orderItems && orderItems.length > 0) {
+                console.log(`📉 Descontando ${orderItems.length} tipos de items del arsenal...`);
+
+                // Paso B: Recorrer y ejecutar la función segura (RPC) por cada item
+                for (const item of orderItems) {
+                    const { error: stockError } = await window.supabaseClient.rpc('decrease_stock_atomic', {
+                        p_id: item.product_id,
+                        qty: item.quantity
+                    });
+
+                    if (stockError) console.error(`❌ Error descontando ID ${item.product_id}:`, stockError);
+                }
+                console.log("✅ Inventario actualizado.");
+            }
 
             // 3. MOSTRAR MODAL DE ÉXITO
             const successModal = document.getElementById('successModal');
