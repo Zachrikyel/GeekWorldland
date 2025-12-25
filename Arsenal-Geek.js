@@ -261,9 +261,10 @@ window.filterByCategory = (identifier, e) => {
 async function loadProducts() {
     const grid = document.getElementById('productsGrid');
 
+    // 🟢 PROFIT TRACKING: Incluimos 'total_profit' (ganancia unitaria calculada en DB)
     const { data, error } = await window.supabaseClient
         .from('products')
-        .select(`*, categories(name), product_colors(*)`)
+        .select(`*, categories(name), product_colors(*), total_profit`)
         .eq('is_published', true)
         // Removemos filtros estrictos - el filtrado de precio se hace en applyFilters
         .order('display_order', { ascending: true });
@@ -463,6 +464,9 @@ window.openProductView = async function (id) {
     modalProduct.compare_at_price = modalPriceSource.compare_at_price;
     modalProduct.base_price = modalPriceSource.base_price;
 
+    // 🟢 PROFIT TRACKING: Guardar ganancia unitaria de la DB
+    modalProduct.profit_unit_value = modalPriceSource.total_profit || 0;
+
     // 🎨 Los colores vienen de localProducts (incluye product_colors con price_adjustment)
     if (localProductData && localProductData.product_colors) {
         modalProduct.colors = localProductData.product_colors;
@@ -652,7 +656,9 @@ window.addToCartFromModal = function () {
             selected_color: selectedColorName,
             selected_variant: selectedVariant, // 🎨 Incluir objeto variante
             price_adjustment: selectedVariant?.price_adjustment || 0, // 📊 Incluir ajuste
-            base_price: finalPrice // Precio final con ajuste de variante
+            base_price: finalPrice, // Precio final con ajuste de variante
+            // 🟢 PROFIT TRACKING: Mapear total_profit de DB -> profit_margin para el carrito
+            profit_margin: modalProduct.profit_unit_value || 0
         };
 
         console.log(`🛒 Añadiendo al carrito: ${modalProduct.name} | Color: ${selectedColorName} | Precio: $${finalPrice.toLocaleString('es-CO')} | Ajuste: ${selectedVariant?.price_adjustment || 0}`);
@@ -684,7 +690,9 @@ window.addToCartFromGrid = function (id) {
 
     const productToSend = {
         ...productObj,
-        base_price: finalPrice // Guardar el precio ya calculado
+        base_price: finalPrice, // Guardar el precio ya calculado
+        // 🟢 PROFIT TRACKING: Mapear total_profit de DB -> profit_margin para el carrito
+        profit_margin: productObj.total_profit || 0
     };
 
     console.log(`📦 Añadiendo desde Grid: ${productObj.name} | Precio: ${finalPrice}`);
