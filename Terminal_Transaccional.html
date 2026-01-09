@@ -36,34 +36,34 @@
 
                 <div class="input-group">
                     <label><i class='bx bxs-mask'></i> ALIAS</label>
-                    <input type="text" id="nickname" placeholder="Ej: StarLord99" required>
+                    <input type="text" id="nickname" placeholder="Ej: StarLord99" required tabindex="1">
                 </div>
 
                 <div class="input-group" id="guest-email-group">
                     <label><i class='bx bx-envelope'></i> EMAIL DE CONTACTO</label>
-                    <input type="email" id="guestEmail" placeholder="tu.email@ejemplo.com">
+                    <input type="email" id="guestEmail" placeholder="tu.email@ejemplo.com" tabindex="2">
                 </div>
 
                 <!-- FILA 2: Identificación, FREC. 1, FREC. 2 -->
                 <div class="input-group">
                     <label><i class='bx bxs-id-card'></i> IDENTIFICACIÓN COMPLETA</label>
-                    <input type="text" id="fullName" placeholder="Nombre y Apellidos" required>
+                    <input type="text" id="fullName" placeholder="Nombre y Apellidos" required tabindex="3">
                 </div>
 
                 <div class="input-group">
                     <label><i class='bx bx-phone'></i> FREC. 1</label>
-                    <input type="tel" id="phone1" placeholder="+57 300..." required>
+                    <input type="tel" id="phone1" placeholder="+57 300..." required tabindex="4">
                 </div>
 
                 <div class="input-group">
                     <label><i class='bx bx-phone'></i> FREC. 2 (Opcional)</label>
-                    <input type="tel" id="phone2" placeholder="Respaldo">
+                    <input type="tel" id="phone2" placeholder="Respaldo" tabindex="9">
                 </div>
 
                 <!-- DROPDOWN PERSONALIZADO: Departamento -->
                 <div class="input-group">
                     <label><i class='bx bxs-map'></i> SECTOR (Departamento)</label>
-                    <div class="custom-dropdown" id="departmentDropdown">
+                    <div class="custom-dropdown" id="departmentDropdown" tabindex="5">
                         <div class="dropdown-selected" data-value="">
                             <span>Seleccionar...</span>
                             <i class='bx bx-chevron-down'></i>
@@ -76,7 +76,7 @@
                 <!-- DROPDOWN PERSONALIZADO: Ciudad -->
                 <div class="input-group">
                     <label><i class='bx bxs-buildings'></i> BASE (Ciudad)</label>
-                    <div class="custom-dropdown disabled" id="cityDropdown">
+                    <div class="custom-dropdown disabled" id="cityDropdown" tabindex="6">
                         <div class="dropdown-selected" data-value="">
                             <span>Primero Sector...</span>
                             <i class='bx bx-chevron-down'></i>
@@ -88,24 +88,25 @@
 
                 <div class="input-group">
                     <label><i class='bx bxs-map-pin'></i> ZIP CODE</label>
-                    <input type="text" id="postalCode" placeholder="110111" maxlength="10">
+                    <input type="text" id="postalCode" placeholder="110111" maxlength="10" tabindex="8">
                 </div>
 
                 <div class="input-group full-width">
                     <label><i class='bx bxs-home'></i> BATICUEVA (Dirección Principal)</label>
-                    <input type="text" id="addressHome" placeholder="Calle Falsa 123, Torre B, Apto 402" required>
+                    <input type="text" id="addressHome" placeholder="Calle Falsa 123, Torre B, Apto 402" required
+                        tabindex="7">
                 </div>
 
                 <div class="input-group half-width">
                     <label><i class='bx bxs-building'></i> TORRE VENGADORES (Trabajo)</label>
-                    <input type="text" id="addressWork" placeholder="Oficina, Edificio... (Opcional)">
+                    <input type="text" id="addressWork" placeholder="Oficina, Edificio... (Opcional)" tabindex="10">
                 </div>
 
 
                 <!-- DROPDOWN PERSONALIZADO: Aterrizaje -->
                 <div class="input-group">
                     <label><i class='bx bx-time'></i> ATERRIZAJE</label>
-                    <div class="custom-dropdown" id="deliveryDropdown">
+                    <div class="custom-dropdown" id="deliveryDropdown" tabindex="11">
                         <div class="dropdown-selected" data-value="Anytime">
                             <span>Cualquier hora (8am-6pm)</span>
                             <i class='bx bx-chevron-down'></i>

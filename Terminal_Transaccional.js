@@ -77,17 +77,28 @@ function initCustomDropdowns() {
     document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
         const selected = dropdown.querySelector('.dropdown-selected');
 
-        selected.addEventListener('click', () => {
-            if (dropdown.classList.contains('disabled')) return;
+        // Toggle click
+        selected.addEventListener('click', () => toggleDropdown(dropdown));
 
-            // Cerrar otros dropdowns abiertos
-            document.querySelectorAll('.custom-dropdown.open').forEach(d => {
-                if (d !== dropdown) d.classList.remove('open');
-            });
-
-            dropdown.classList.toggle('open');
+        // Toggle teclado (Enter/Espacio)
+        dropdown.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleDropdown(dropdown);
+            }
         });
     });
+}
+
+function toggleDropdown(dropdown) {
+    if (dropdown.classList.contains('disabled')) return;
+
+    // Cerrar otros dropdowns abiertos
+    document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+        if (d !== dropdown) d.classList.remove('open');
+    });
+
+    dropdown.classList.toggle('open');
 }
 
 function populateDepartments() {
@@ -527,9 +538,8 @@ window.processPayment = async function () {
         console.log("🔐 Firma generada:", integritySignature);
 
         // 8. CREAR WIDGET DE WOMPI
-        const widgetContainer = document.getElementById('wompi-widget-container');
         widgetContainer.innerHTML = '';
-        widgetContainer.style.display = 'block'; // Mostrar para debug/backup manual
+        widgetContainer.style.display = 'none';
 
         const script = document.createElement('script');
         script.src = "https://checkout.wompi.co/widget.js";
