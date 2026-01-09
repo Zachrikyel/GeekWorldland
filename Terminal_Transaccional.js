@@ -49,14 +49,10 @@ const WOMPI_CONFIG = {
 
 // ========== INICIALIZACIÓN ==========
 document.addEventListener('DOMContentLoaded', async () => {
-    const deptSelect = document.getElementById('departmentSelect');
-
-    Object.keys(colombiaData).sort().forEach(dept => {
-        const option = document.createElement('option');
-        option.value = dept;
-        option.textContent = dept;
-        deptSelect.appendChild(option);
-    });
+    // Inicializar dropdowns personalizados
+    initCustomDropdowns();
+    populateDepartments();
+    initDeliveryDropdown();
 
     renderCheckoutSummary();
     checkUserAndPrefill();
@@ -67,27 +63,141 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Eventos
     document.getElementById('btnApplyDiscount').addEventListener('click', applyDiscount);
     document.getElementById('btnInitTransaction').addEventListener('click', processPayment);
+
+    // Cerrar dropdowns al hacer click fuera
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-dropdown')) {
+            document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+        }
+    });
 });
 
-// ========== CARGAR CIUDADES ==========
-window.loadCities = function () {
-    const deptSelect = document.getElementById('departmentSelect');
-    const citySelect = document.getElementById('citySelect');
-    const selectedDept = deptSelect.value;
+// ========== DROPDOWNS PERSONALIZADOS ==========
+function initCustomDropdowns() {
+    document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+        const selected = dropdown.querySelector('.dropdown-selected');
 
-    citySelect.innerHTML = '<option value="">Seleccionar...</option>';
+        selected.addEventListener('click', () => {
+            if (dropdown.classList.contains('disabled')) return;
+
+            // Cerrar otros dropdowns abiertos
+            document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+                if (d !== dropdown) d.classList.remove('open');
+            });
+
+            dropdown.classList.toggle('open');
+        });
+    });
+}
+
+function populateDepartments() {
+    const optionsList = document.getElementById('departmentOptions');
+    optionsList.innerHTML = '';
+
+    Object.keys(colombiaData).sort().forEach(dept => {
+        const li = document.createElement('li');
+        li.textContent = dept;
+        li.dataset.value = dept;
+        li.addEventListener('click', () => selectDepartment(dept));
+        optionsList.appendChild(li);
+    });
+}
+
+function selectDepartment(dept) {
+    const dropdown = document.getElementById('departmentDropdown');
+    const selected = dropdown.querySelector('.dropdown-selected');
+    const hiddenInput = document.getElementById('departmentSelect');
+
+    // Actualizar visual
+    selected.querySelector('span').textContent = dept;
+    selected.dataset.value = dept;
+    hiddenInput.value = dept;
+
+    // Marcar como seleccionado
+    dropdown.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+    dropdown.querySelector(`li[data-value="${dept}"]`)?.classList.add('selected');
+
+    // Cerrar dropdown
+    dropdown.classList.remove('open');
+
+    // Cargar ciudades
+    loadCities(dept);
+}
+
+// ========== CARGAR CIUDADES ==========
+window.loadCities = function (selectedDept) {
+    const cityDropdown = document.getElementById('cityDropdown');
+    const cityOptions = document.getElementById('cityOptions');
+    const cityHidden = document.getElementById('citySelect');
+    const citySelected = cityDropdown.querySelector('.dropdown-selected');
+
+    // Limpiar
+    cityOptions.innerHTML = '';
+    cityHidden.value = '';
+    citySelected.querySelector('span').textContent = 'Seleccionar...';
+    citySelected.dataset.value = '';
 
     if (selectedDept && colombiaData[selectedDept]) {
-        citySelect.disabled = false;
+        // Habilitar dropdown
+        cityDropdown.classList.remove('disabled');
+
+        // Poblar ciudades
         colombiaData[selectedDept].sort().forEach(city => {
-            const option = document.createElement('option');
-            option.value = city;
-            option.textContent = city;
-            citySelect.appendChild(option);
+            const li = document.createElement('li');
+            li.textContent = city;
+            li.dataset.value = city;
+            li.addEventListener('click', () => selectCity(city));
+            cityOptions.appendChild(li);
         });
     } else {
-        citySelect.disabled = true;
+        cityDropdown.classList.add('disabled');
     }
+}
+
+function selectCity(city) {
+    const dropdown = document.getElementById('cityDropdown');
+    const selected = dropdown.querySelector('.dropdown-selected');
+    const hiddenInput = document.getElementById('citySelect');
+
+    // Actualizar visual
+    selected.querySelector('span').textContent = city;
+    selected.dataset.value = city;
+    hiddenInput.value = city;
+
+    // Marcar como seleccionado
+    dropdown.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+    dropdown.querySelector(`li[data-value="${city}"]`)?.classList.add('selected');
+
+    // Cerrar dropdown
+    dropdown.classList.remove('open');
+}
+
+// ========== DROPDOWN ATERRIZAJE ==========
+function initDeliveryDropdown() {
+    const deliveryOptions = document.getElementById('deliveryOptions');
+    if (!deliveryOptions) return;
+
+    deliveryOptions.querySelectorAll('li').forEach(li => {
+        li.addEventListener('click', () => {
+            const dropdown = document.getElementById('deliveryDropdown');
+            const selected = dropdown.querySelector('.dropdown-selected');
+            const hiddenInput = document.getElementById('deliveryTime');
+            const value = li.dataset.value;
+            const text = li.textContent;
+
+            // Actualizar visual
+            selected.querySelector('span').textContent = text;
+            selected.dataset.value = value;
+            hiddenInput.value = value;
+
+            // Marcar como seleccionado
+            deliveryOptions.querySelectorAll('li').forEach(l => l.classList.remove('selected'));
+            li.classList.add('selected');
+
+            // Cerrar dropdown
+            dropdown.classList.remove('open');
+        });
+    });
 }
 
 // ========== RENDERIZAR RESUMEN ==========
@@ -214,12 +324,18 @@ async function checkUserAndPrefill() {
     if (!window.supabaseClient) return;
     const { data: { user } } = await window.supabaseClient.auth.getUser();
 
+    // Mostrar/ocultar campo de email para invitados
+    const guestEmailGroup = document.getElementById('guest-email-group');
+    if (guestEmailGroup) {
+        guestEmailGroup.style.display = user ? 'none' : 'block';
+    }
+
     if (user) {
         const saveCheck = document.getElementById('saveInfoCheck');
         if (saveCheck) saveCheck.checked = true;
 
-        const { data: profile } = await window._supabase.Client.from('users').select('*').eq('id', user.id).single();
-        const { data: address } = await window._supabase.Client.from('user_addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false }).limit(1).single();
+        const { data: profile } = await window.supabaseClient.from('users').select('*').eq('id', user.id).single();
+        const { data: address } = await window.supabaseClient.from('user_addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false }).limit(1).single();
 
         if (profile) {
             if (document.getElementById('fullName')) document.getElementById('fullName').value = profile.full_name || '';
@@ -257,13 +373,20 @@ window.processPayment = async function () {
 
     const btn = document.getElementById('btnInitTransaction');
 
-    // 1. VALIDACIÓN
+    // 1. VALIDACIÓN - Obtener usuario primero para saber qué campos requerir
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+
+    // Si NO hay usuario, requerimos email para invitado
     const required = ['fullName', 'nickname', 'phone1', 'addressHome', 'departmentSelect', 'citySelect'];
+    if (!user) {
+        required.push('guestEmail'); // Campo de email para invitados
+    }
+
     let valid = true;
     required.forEach(id => {
         const el = document.getElementById(id);
-        if (!el.value.trim()) {
-            el.style.borderColor = 'red';
+        if (!el || !el.value.trim()) {
+            if (el) el.style.borderColor = 'red';
             valid = false;
         } else {
             el.style.borderColor = 'rgba(255,255,255,0.2)';
@@ -271,7 +394,11 @@ window.processPayment = async function () {
     });
 
     if (!valid) {
-        showNotification("⚠️ Faltan datos de la misión.");
+        if (!user && !document.getElementById('guestEmail')?.value.trim()) {
+            showNotification("⚠️ Ingresa tu email para continuar como invitado.");
+        } else {
+            showNotification("⚠️ Faltan datos de la misión.");
+        }
         return;
     }
 
@@ -286,25 +413,33 @@ window.processPayment = async function () {
     btn.disabled = true;
 
     try {
-        // 2. OBTENER USUARIO
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
-        if (!user) throw new Error("Debes iniciar sesión.");
+        // 2. EMAIL PARA TRANSACCIÓN (usuario logueado o invitado)
+        const guestEmailInput = document.getElementById('guestEmail');
+        const guestEmail = guestEmailInput ? guestEmailInput.value.trim() : '';
+        const customerEmail = user ? user.email : guestEmail;
 
-        // 3. GUARDAR DATOS Y PERMISOS
-        if (document.getElementById('saveInfoCheck').checked) {
-            await window._supabase.Client.from('users').update({
+        if (!customerEmail) {
+            throw new Error("Se requiere un email para procesar el pago.");
+        }
+
+        // 3. GUARDAR DATOS Y PERMISOS (solo si hay usuario logueado)
+        if (user && document.getElementById('saveInfoCheck')?.checked) {
+            await window.supabaseClient.from('users').update({
                 full_name: document.getElementById('fullName').value,
                 phone: document.getElementById('phone1').value,
-                marketing_consent: document.getElementById('promoConsentCheck').checked
+                marketing_consent: document.getElementById('promoConsentCheck')?.checked || false
             }).eq('id', user.id);
         }
 
         // 4. PREPARAR DATOS WOMPI
         const amountInCents = Math.round(window.cartTotalValue * 100);
-        const reference = `ORD-${Date.now()}-${user.id.slice(0, 8)}`;
+        // Generar referencia única (con user.id si existe, o timestamp + random si es invitado)
+        const reference = user
+            ? `ORD-${Date.now()}-${user.id.slice(0, 8)}`
+            : `ORD-${Date.now()}-G${Math.random().toString(36).slice(2, 8)}`;
         const currency = 'COP';
 
-        // 🧠 NUEVO: CÁLCULO DE GANANCIA (PROFIT)
+        // 🧠 CÁLCULO DE GANANCIA (PROFIT)
         const cart = JSON.parse(localStorage.getItem('geekCart')) || [];
 
         // Sumamos la ganancia individual de cada producto
@@ -313,32 +448,41 @@ window.processPayment = async function () {
             return sum + (itemProfit * item.quantity);
         }, 0);
 
-        console.log("💰 Ganancia estimada web:", totalProfit);
+        // Ganancia calculada (no mostrar en consola por seguridad)
 
-        // 5. CREAR ORDEN EN BASE DE DATOS (ACTUALIZADO)
+        // 5. CREAR ORDEN EN BASE DE DATOS
+        const orderPayload = {
+            total_amount: window.cartTotalValue,
+            status: 'pending_payment',
+            payment_method: 'Wompi',
+            wompi_reference: reference,
+            currency: 'COP',
+            total_profit: totalProfit,
+            order_source: 'web',
+            shipping_address: {
+                address: document.getElementById('addressHome').value,
+                city: document.getElementById('citySelect').value,
+                dept: document.getElementById('departmentSelect').value,
+                postal_code: document.getElementById('postalCode').value || '',
+                delivery_window: document.getElementById('deliveryTime')?.value || 'Anytime',
+                additional_notes: document.getElementById('addressDetails')?.value || ''
+            }
+        };
+
+        // Usuario maestro para compras anónimas
+        const MASTER_USER_ID = 'c4a011c5-d8af-47ab-bc2f-f245b3cf6462';
+
+        // Agregar user_id (del usuario o del maestro para invitados)
+        if (user) {
+            orderPayload.user_id = user.id;
+        } else {
+            orderPayload.user_id = MASTER_USER_ID; // Asignar al usuario maestro
+            orderPayload.guest_email = guestEmail; // Mantener email del invitado para contacto
+        }
+
         const { data: orderData, error: orderError } = await window.supabaseClient
             .from('orders')
-            .insert([{
-                user_id: user.id,
-                total_amount: window.cartTotalValue,
-                status: 'pending_payment',
-                payment_method: 'Wompi',
-                wompi_reference: reference,
-                currency: 'COP',
-
-                // 👇 LAS NUEVAS COLUMNAS CLAVE
-                total_profit: totalProfit,  // Ganancia automática
-                order_source: 'web',        // Origen del pedido
-
-                shipping_address: {
-                    address: document.getElementById('addressHome').value,
-                    city: document.getElementById('citySelect').value,
-                    dept: document.getElementById('departmentSelect').value,
-                    postal_code: document.getElementById('postalCode').value || '',
-                    delivery_window: document.getElementById('deliveryTime')?.value || 'Anytime',
-                    additional_notes: document.getElementById('addressDetails')?.value || ''
-                }
-            }])
+            .insert([orderPayload])
             .select()
             .single();
 
@@ -385,7 +529,7 @@ window.processPayment = async function () {
         // 8. CREAR WIDGET DE WOMPI
         const widgetContainer = document.getElementById('wompi-widget-container');
         widgetContainer.innerHTML = '';
-        widgetContainer.style.display = 'none';
+        widgetContainer.style.display = 'block'; // Mostrar para debug/backup manual
 
         const script = document.createElement('script');
         script.src = "https://checkout.wompi.co/widget.js";
@@ -397,8 +541,8 @@ window.processPayment = async function () {
         script.setAttribute('data-signature:integrity', integritySignature);
         script.setAttribute('data-redirect-url', window.location.href);
 
-        // Datos del cliente
-        script.setAttribute('data-customer-data:email', user.email);
+        // Datos del cliente (usar email del usuario o del invitado)
+        script.setAttribute('data-customer-data:email', customerEmail);
         script.setAttribute('data-customer-data:full-name', document.getElementById('fullName').value);
         script.setAttribute('data-customer-data:phone-number', document.getElementById('phone1').value);
         script.setAttribute('data-customer-data:phone-number-prefix', '+57');

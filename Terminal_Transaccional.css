@@ -126,8 +126,8 @@ h2.section-title {
     pointer-events: none;
 }
 
-/* 3. El Icono dentro del Label */
-.checkout-section .input-group label i {
+/* 3. El Icono dentro del Label (NO los del dropdown) */
+.checkout-section .input-group>label i {
     position: static !important;
     /* ANULAR ABSOLUTE CRÍTICO */
     transform: none !important;
@@ -138,7 +138,6 @@ h2.section-title {
 
 /* 4. Los Inputs */
 .checkout-section input,
-.checkout-section select,
 .checkout-section textarea {
     width: 100%;
     padding: 12px 15px !important;
@@ -154,16 +153,130 @@ h2.section-title {
 }
 
 .checkout-section input:focus,
-.checkout-section select:focus,
 .checkout-section textarea:focus {
     border-color: var(--primary-cyan);
     background: rgba(6, 182, 212, 0.1) !important;
     box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
 }
 
-.checkout-section select option {
-    background: #000;
+/* ========== DROPDOWN PERSONALIZADO ========== */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
     color: white;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dropdown-selected:hover {
+    border-color: rgba(6, 182, 212, 0.5);
+}
+
+.dropdown-selected i {
+    position: static !important;
+    transform: none !important;
+    color: var(--primary-cyan) !important;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+    pointer-events: none;
+}
+
+.custom-dropdown.open .dropdown-selected {
+    border-color: var(--primary-cyan);
+    background: rgba(6, 182, 212, 0.1);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+}
+
+.custom-dropdown.open .dropdown-selected i {
+    transform: rotate(180deg);
+}
+
+/* Lista de opciones */
+.dropdown-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 26, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 8px;
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.25s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.custom-dropdown.open .dropdown-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-options li {
+    padding: 10px 15px;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+}
+
+.dropdown-options li:hover {
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--primary-cyan);
+    padding-left: 20px;
+}
+
+.dropdown-options li.selected {
+    background: rgba(132, 204, 22, 0.15);
+    color: var(--primary-lime);
+}
+
+/* Scrollbar de las opciones */
+.dropdown-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-options::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb {
+    background: var(--primary-purple);
+    border-radius: 10px;
+}
+
+/* Estado deshabilitado */
+.custom-dropdown.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.custom-dropdown.disabled .dropdown-selected {
+    cursor: not-allowed;
 }
 
 /* ========== CHECKBOX ========== */

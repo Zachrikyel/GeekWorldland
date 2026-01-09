@@ -1271,7 +1271,7 @@ function updateCart() {
         <div class="cart-item-info">
             <h4 style="font-size:1.3rem; margin-bottom:2px; color:white;">${item.name}</h4>
             ${colorDisplay} 
-            <p class="cart-item-price" style="color:var(--primary-cyan); font-weight:bold;">$${itemPrice.toLocaleString('es-CO')}</p>
+            <p class="cart-item-price">$${itemPrice.toLocaleString('es-CO')}</p>
             <p class="cart-item-qty" style="font-size:0.8rem; color:#aaa;">Cant: ${item.quantity}</p>
         </div>
         
