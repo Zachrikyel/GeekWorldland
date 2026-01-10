@@ -43,6 +43,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // B. Cargar Datos
         await loadCategories();
+
+        // 🔍 E. LEER PARÁMETRO DE CATEGORÍA (Nave Nodriza)
+        const catParam = urlParams.get('cat');
+        if (catParam && !searchParam) { // Prioridad a la búsqueda si existen ambos
+            console.log("📂 Filtro de categoría detectado:", catParam);
+            const targetCat = localCategories.find(c => c.slug === catParam);
+            if (targetCat) {
+                // Filtramos por ID para activar la lógica "VER TODO" de esa categoría
+                filterByCategory(targetCat.id);
+            }
+        }
+
         await loadProducts();
 
         // C. Activar Controles
